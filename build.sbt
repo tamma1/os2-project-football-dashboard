@@ -9,6 +9,14 @@ lazy val root = (project in file("."))
 
 libraryDependencies += "org.scalafx" % "scalafx_3" % "19.0.0-R30"
 
+libraryDependencies += "com.lihaoyi" %% "requests" % "0.8.0"
+
+libraryDependencies ++= Seq(
+      "io.circe" %% "circe-core" % "0.14.4",
+      "io.circe" %% "circe-generic" % "0.14.4",
+      "io.circe" %% "circe-parser" % "0.14.4"
+    )
+
 libraryDependencies ++= {
   // Determine OS version of JavaFX binaries
   lazy val osName = System.getProperty("os.name") match {
