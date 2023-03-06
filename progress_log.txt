@@ -1,0 +1,14 @@
+Mon 6.3.
+
+I have added the DashboardApp and APIConnection classes (and DataSource class without implementation).
+In the DashboardApp class, I have implemented the basic GUI layout without any functionality yet.
+In the APIConnection class, I have implemented methods for fetching data from the API in a string format.
+
+I haven't written any tests for methods yet, but I have tested the APIConnection.fetch method in REPL.
+
+I faced some difficulties when adding library dependencies for making GET requests to the API, but managed to solve that.
+
+I have spent a lot of time on getting familiar with ScalaFX, GET requests and the API documentation, which were new topics for me.
+In total, I have spent about 15 hours on the project.
+
+I'm roughly at the same stage as I had planned.
