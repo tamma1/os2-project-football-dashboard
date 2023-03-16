@@ -5,6 +5,8 @@ import scala.util.{Failure, Success, Try}
 import requests.*
 import io.circe.parser.decode
 import io.circe.*, io.circe.parser.*, io.circe.syntax.*, io.circe.generic.auto.*
+import data_processing.LeagueData.{InitialResponse => LeagueInitialResponse}
+import data_processing.LeagueData.{Response => LeagueResponse}
 
 
 object APIConnection:
@@ -40,4 +42,11 @@ object APIConnection:
         Console.err.println("Connection failed.")
         throw e
 
-  //TODO: Implement parsing the fetched string to JSON
+  // Decodes the data received into a Response object.
+  def decodeTeams(data: String) =
+    decode[LeagueInitialResponse](data).toTry match
+      case Success(result) => LeagueResponse(result)
+      case Failure(error) =>
+        Console.err.println("Invalid data received.")
+        error.printStackTrace()
+          throw error

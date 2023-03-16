@@ -6,6 +6,7 @@ import scalafx.scene.control.*
 import scalafx.scene.paint.Color.*
 import scalafx.geometry.Insets
 
+
 object DashboardApp extends JFXApp3:
 
   def start(): Unit =
