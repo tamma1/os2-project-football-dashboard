@@ -11,6 +11,8 @@ libraryDependencies += "org.scalafx" % "scalafx_3" % "19.0.0-R30"
 
 libraryDependencies += "com.lihaoyi" %% "requests" % "0.8.0"
 
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.14" % "test"
+
 libraryDependencies ++= Seq(
       "io.circe" %% "circe-core" % "0.14.5",
       "io.circe" %% "circe-generic" % "0.14.5",
