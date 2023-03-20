@@ -8,7 +8,6 @@ object LeagueData:
   def getLeagueData(leagueID: Int, season: Int) =
     val url = s"https://api-football-v1.p.rapidapi.com/v3/teams?league=${leagueID}&season=${season}"
     val data = fetch(url)
-    println(data)
     decodeTeams(data)
 
   // Stores the data received from the API.

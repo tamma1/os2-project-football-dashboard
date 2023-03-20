@@ -12,3 +12,25 @@ I have spent a lot of time on getting familiar with ScalaFX, GET requests and th
 In total, I have spent about 15 hours on the project.
 
 I'm roughly at the same stage as I had planned.
+
+****************************************************************************************************************************************
+
+Mon 20.3.
+
+I have implemented two new classes: LeagueData and ChartBox.
+
+The ChartBox class represents chart boxes that are added to the chart area in GUI. The chart boxes have adjustable sizes.
+I also changed the layout of the chart area from GridPane to FlowPane because it made the GUI more flexible.
+
+The LeagueData class has a getLeagueData method which uses the decodeTeams method in APIConnection class to retrieve data from the API.
+The data is stored in a case class where it can be easily accessed by other classes
+
+I also implemented some tests for the LeagueData class, but they are not very comprehensive yet.
+I have tested the GUI just by using it.
+
+I had some problems with implementing the chart boxes and how to make them adjustable but the work quite well at the moment.
+I also used a lot of time to think how to make the GUI layout user-friendly.
+
+In total, I have spent about 15 hours on the project during the last two weeks.
+
+I'm a bit behind the stage I had planned.
