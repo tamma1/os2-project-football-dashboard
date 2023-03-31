@@ -8,6 +8,7 @@ import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.shape.Rectangle
 import scalafx.scene.Cursor
+import javafx.scene.layout.StackPane as JStackPane
 import gui_components.*
 
 
@@ -39,11 +40,17 @@ object DashboardApp extends JFXApp3:
     // Creates chart area.
     val chartArea = new FlowPane(10, 10)
 
-    // Adds a new chart box to chart area when add chart -button is clicked.
+    // Adds a new chart box to chart area when "add chart" -button is clicked.
     addChartButton.setOnAction( _ =>
-      val selectDataButton = new Button("Select data")
+      // Creates a new ChartBOx
       val newChart = new ChartBox()
-      newChart.children += selectDataButton
+      // Sets the height of the new chartBox to the height of the chartBox added earlier-
+      val lastChartHeight =
+        chartArea.children.lastOption match
+          case Some(a)  => a.asInstanceOf[JStackPane].getHeight
+          case _        => newChart.prefHeight.value
+      newChart.prefHeight = lastChartHeight
+      // Adds chartBox to chartArea.
       chartArea.children += newChart
     )
 
