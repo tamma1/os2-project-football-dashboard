@@ -7,7 +7,6 @@ import scalafx.scene.paint.Color.*
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.shape.Rectangle
-import scalafx.scene.Cursor
 import javafx.scene.layout.StackPane as JStackPane
 import gui_components.*
 
@@ -34,8 +33,9 @@ object DashboardApp extends JFXApp3:
     val refreshButton = new Button("Refresh data")
     val topMenu = new HBox(10, addChartButton, saveButton, loadButton, refreshButton)
 
-    // Sets background color for top menu.
+    // Sets background color and adds padding for top menu.
     topMenu.background = Background(Array(new BackgroundFill(Green, CornerRadii.Empty, Insets.Empty)))
+    topMenu.padding = Insets(4, 4, 4, 4)
 
     // Creates chart area.
     val chartArea = new FlowPane(10, 10)

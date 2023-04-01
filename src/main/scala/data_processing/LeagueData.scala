@@ -53,4 +53,12 @@ object LeagueData:
                             response: Array[InitialTeams]
                             )
 
+  // Map of leageue names and their IDs.
+  val leagueMap: Map[String, Int] = Map(
+    "Premier League" -> 39,
+    "La Liga" -> 140, 
+    "Bundesliga" -> 78, 
+    "Serie A" -> 135, 
+    "Ligue 1" -> 61
+  )
 
