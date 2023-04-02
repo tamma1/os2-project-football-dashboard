@@ -9,7 +9,10 @@ import scalafx.collections.ObservableBuffer
 import scalafx.geometry.Pos.TopLeft
 import scalafx.scene.Cursor
 import scalafx.scene.input.MouseEvent
-import scalafx.scene.control.{Button, ComboBox}
+import scalafx.scene.control.{Button, ComboBox, ProgressIndicator}
+import scala.util.{Try, Failure, Success}
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 import data_processing.LeagueData.*
 
 // Class for chart boxes that are added to the chart area.
@@ -87,10 +90,17 @@ class ChartBox extends StackPane:
   // Container for ComboBoxes.
   private val leftVBox = new VBox(10)
 
+  // Map for chart types.
+  private val chartMap = Map(
+    "Pie Chart" -> new MyPieChart(),
+    "Bar Chart" -> new MyBarChart(),
+    "Line Chart" -> new MyLineChart()
+  )
+
   // ComboBox for selecting the chart type.
   private val selectChart = new ComboBox[String]()
   selectChart.promptText = "Select chart"
-  selectChart.items = ObservableBuffer("Pie Chart", "Bar Chart")
+  selectChart.items = ObservableBuffer().concat(chartMap.keys)
   leftVBox.children += selectChart
 
   // ComboBox for selecting the league.
@@ -103,24 +113,47 @@ class ChartBox extends StackPane:
   contents.left = leftVBox
 
   // Adds the selected chart to contents.
-  selectChart.value.onChange( (_, oldValue, newValue) =>
-    if newValue == "Pie Chart" then
-      contents.center = new MyPieChart()
-    else
-      contents.center = new MyBarChart()
+  selectChart.value.onChange( (_, _, newValue) =>
+    contents.center = chartMap(newValue)
   )
 
   // Adds a ComboBox containing the clubs from the selected league.
-  selectLeague.value.onChange( (_, oldValue, newValue) =>
+  selectLeague.value.onChange { (_, oldValue, newValue) =>
+
+    // Container for the loading icon and club selection list.
+    val clubSelectionContainer = new HBox()
+    clubSelectionContainer.spacing = 3
+    clubSelectionContainer.maxWidth = 130
+
+    // Creates a ComboBox and a loading indicator and adds them to the container.
     val clubSelection = new ComboBox[String]()
     clubSelection.promptText = "Select club"
-    clubSelection.items = ObservableBuffer.concat(getLeagueData(leagueMap(newValue), 2022).teams)
-    clubSelection.maxWidth = 130
+    clubSelection.maxWidth = 120
+    val loading = new ProgressIndicator()
+    loading.prefHeight = 10
+    clubSelectionContainer.children.addAll(clubSelection, loading)
+
+    // Clubs wrapped in a Future.
+    val futureData = Future {
+      getLeagueData(leagueMap(newValue), 2022).teams
+    }
+
+    // Adds the clubs to the list when loaded from the Internet.
+    futureData.onComplete {
+      case Success(clubs) =>
+        clubSelection.items = ObservableBuffer().concat(clubs)
+        loading.visible = false
+      case Failure(exception) =>
+        clubSelection.setPromptText("Error loading data")
+        loading.visible = false
+    }
+
+    // Adds club selection to the left side of the chart box.
     if leftVBox.children.length >= 3 then
-      leftVBox.children(2) = clubSelection
+      leftVBox.children(2) = clubSelectionContainer
     else
-      leftVBox.children += clubSelection
-  )
+      leftVBox.children += clubSelectionContainer
+  }
 
   // Adds the contents to this chart area.
   this.children += contents
