@@ -34,3 +34,23 @@ I also used a lot of time to think how to make the GUI layout user-friendly.
 In total, I have spent about 15 hours on the project during the last two weeks.
 
 I'm a bit behind the stage I had planned.
+
+****************************************************************************************************************************************
+
+Mon 3.4.
+
+During the last two weeks, I have worked mainly on improving the GUI.
+
+I have implemented methods for selecting data and charts. At the moment, the charts have just some test data. My next task is to connect
+the charts with the selected data. The method for selecting club is the first one in the GUI that uses the APIConnection class to fetch
+data from the API. For now, the data is just a list of clubs in the selected league, but fetching more complex data shouldn't be very
+difficult to implement, now that I know the basics of fetching data and connecting it to the GUI.
+
+I haven't written any new tests, but I have used the GUI in different scenarios.
+
+The GUI has few little bugs that I'm working on. But nothing unreasonably difficult has occured.
+
+In total, I have spent about 15 hours on the project during the last two weeks.
+
+I'm a bit behind the stage I had planned.
+

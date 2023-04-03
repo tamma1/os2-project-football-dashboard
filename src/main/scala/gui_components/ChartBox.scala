@@ -123,12 +123,12 @@ class ChartBox extends StackPane:
     // Container for the loading icon and club selection list.
     val clubSelectionContainer = new HBox()
     clubSelectionContainer.spacing = 3
-    clubSelectionContainer.maxWidth = 130
+    clubSelectionContainer.maxWidth = 140
 
     // Creates a ComboBox and a loading indicator and adds them to the container.
     val clubSelection = new ComboBox[String]()
     clubSelection.promptText = "Select club"
-    clubSelection.maxWidth = 120
+    clubSelection.maxWidth = 130
     val loading = new ProgressIndicator()
     loading.prefHeight = 10
     clubSelectionContainer.children.addAll(clubSelection, loading)
