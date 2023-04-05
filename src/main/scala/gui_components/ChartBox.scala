@@ -1,21 +1,17 @@
 package gui_components
 
-import scalafx.geometry.Insets
-import scalafx.scene.layout.*
-import scalafx.scene.paint.Color.*
-import scalafx.scene.shape.Rectangle
+import data_processing.LeagueData.*
+import javafx.scene.layout.{FlowPane as JFlowPane, StackPane as JStackPane}
 import scalafx.Includes.*
 import scalafx.collections.ObservableBuffer
+import scalafx.geometry.Insets
 import scalafx.geometry.Pos.*
 import scalafx.scene.Cursor
-import scalafx.scene.input.MouseEvent
 import scalafx.scene.control.{Button, ComboBox, ProgressIndicator}
-import scala.util.{Try, Failure, Success}
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
-import javafx.scene.layout.FlowPane as JFlowPane
-import javafx.scene.layout.StackPane as JStackPane
-import data_processing.LeagueData.*
+import scalafx.scene.input.MouseEvent
+import scalafx.scene.layout.*
+import scalafx.scene.paint.Color.*
+
 
 // Class for chart boxes that are added to the chart area.
 class ChartBox extends StackPane:
@@ -104,7 +100,7 @@ class ChartBox extends StackPane:
 
   // Container for some buttons in the top area of the chart box.
   private val topArea = new HBox(10)
-  topArea.padding = Insets(3, 3, 3, 3)
+  topArea.padding = Insets(1, 1, 1, 1)
   topArea.background = Background(Array(new BackgroundFill(Lime, CornerRadii.Empty, Insets.Empty)))
   topArea.alignment = CenterRight
   topArea.border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
@@ -119,78 +115,27 @@ class ChartBox extends StackPane:
     parentArea.children.removeAll(this)
   )
 
-  // Add top area to the chart box.
-  contents.top = topArea
-
-  // Container for ComboBoxes.
-  private val leftVBox = new VBox(10)
-  leftVBox.padding = Insets(2, 2, 2, 2)
+  // ComboBoxes for selecting chart and data.
+  private val leftVBox = new DataSelection()
 
   // Map for chart types.
-  private val chartMap = Map(
+  val chartMap = Map(
     "Pie Chart" -> new MyPieChart(),
     "Bar Chart" -> new MyBarChart(),
     "Line Chart" -> new MyLineChart()
   )
 
-  // ComboBox for selecting the chart type.
-  private val selectChart = new ComboBox[String]()
-  selectChart.promptText = "Select chart"
-  selectChart.items = ObservableBuffer().concat(chartMap.keys)
-  leftVBox.children += selectChart
+  // Adds the selected chart to contents.
+  leftVBox.selectChart.value.onChange( (_, _, newValue) =>
+    contents.center = leftVBox.chartMap(newValue)
+    leftVBox.selectLeague.visible = true
+  )
 
-  // ComboBox for selecting the league.
-  private val selectLeague = new ComboBox[String]()
-  selectLeague.promptText = "Select league"
-  selectLeague.items = ObservableBuffer().concat(leagueMap.keys)
-  leftVBox.children += selectLeague
+  // Adds top area to the chart box.
+  contents.top = topArea
 
   // Adds ComboBoxes to contents.
   contents.left = leftVBox
-
-  // Adds the selected chart to contents.
-  selectChart.value.onChange( (_, _, newValue) =>
-    contents.center = chartMap(newValue)
-  )
-
-  // Adds a ComboBox containing the clubs from the selected league.
-  selectLeague.value.onChange { (_, oldValue, newValue) =>
-
-    // Container for the loading icon and club selection list.
-    val clubSelectionContainer = new HBox()
-    clubSelectionContainer.spacing = 3
-    clubSelectionContainer.maxWidth = 140
-
-    // Creates a ComboBox and a loading indicator and adds them to the container.
-    val clubSelection = new ComboBox[String]()
-    clubSelection.promptText = "Select club"
-    clubSelection.maxWidth = 120
-    val loading = new ProgressIndicator()
-    loading.prefHeight = 10
-    loading.prefWidth = 20
-    clubSelectionContainer.children.addAll(clubSelection, loading)
-
-    // Clubs wrapped in a Future.
-    val futureData = Future {
-      getLeagueData(leagueMap(newValue), 2022).teams
-    }
-
-    // Adds the clubs to the list when loaded from the Internet.
-    futureData.onComplete {
-      case Success(clubs) =>
-        clubSelection.items = ObservableBuffer().concat(clubs)
-        loading.visible = false
-      case Failure(exception) =>
-        clubSelection.setPromptText("Error loading data")
-        loading.visible = false
-    }
-
-    // Adds club selection to the left side of the chart box.
-    if leftVBox.children.length >= 3 then
-      leftVBox.children(2) = clubSelectionContainer
-    else
-      leftVBox.children += clubSelectionContainer
-  }
 
   // Adds the contents to this chart area.
   this.children += contents

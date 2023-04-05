@@ -56,9 +56,21 @@ object LeagueData:
   // Map of leageue names and their IDs.
   val leagueMap: Map[String, Int] = Map(
     "Premier League" -> 39,
-    "La Liga" -> 140, 
-    "Bundesliga" -> 78, 
-    "Serie A" -> 135, 
+    "La Liga" -> 140,
+    "Bundesliga" -> 78,
+    "Serie A" -> 135,
     "Ligue 1" -> 61
   )
 
+  // Map of seasons.
+  val seasonMap: Map[String, Int] = Map(
+    "2015-2016" -> 2015,
+    "2016-2017" -> 2016,
+    "2017-2018" -> 2017,
+    "2018-2019" -> 2018,
+    "2019-2020" -> 2019,
+    "2020-2021" -> 2020,
+    "2021-2022" -> 2021,
+    "2022-2023" -> 2022
+  )
+    

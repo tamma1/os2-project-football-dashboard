@@ -1,14 +1,14 @@
+import gui_components.*
+import javafx.scene.layout.StackPane as JStackPane
 import scalafx.Includes.*
 import scalafx.application.JFXApp3
-import scalafx.scene.Scene
-import scalafx.scene.layout.*
-import scalafx.scene.control.*
-import scalafx.scene.paint.Color.*
 import scalafx.geometry.{Insets, Pos}
+import scalafx.scene.Scene
+import scalafx.scene.control.*
 import scalafx.scene.input.MouseEvent
+import scalafx.scene.layout.*
+import scalafx.scene.paint.Color.*
 import scalafx.scene.shape.Rectangle
-import javafx.scene.layout.StackPane as JStackPane
-import gui_components.*
 
 
 object DashboardApp extends JFXApp3:
