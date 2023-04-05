@@ -6,20 +6,22 @@ import scalafx.scene.paint.Color.*
 import scalafx.scene.shape.Rectangle
 import scalafx.Includes.*
 import scalafx.collections.ObservableBuffer
-import scalafx.geometry.Pos.TopLeft
+import scalafx.geometry.Pos.*
 import scalafx.scene.Cursor
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.control.{Button, ComboBox, ProgressIndicator}
 import scala.util.{Try, Failure, Success}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import javafx.scene.layout.FlowPane as JFlowPane
+import javafx.scene.layout.StackPane as JStackPane
 import data_processing.LeagueData.*
 
 // Class for chart boxes that are added to the chart area.
 class ChartBox extends StackPane:
 
   // Sets height, width and color.
-  minWidth = 310
+  minWidth = 330
   minHeight = 160
   prefWidth = 400
   prefHeight = 200
@@ -46,12 +48,19 @@ class ChartBox extends StackPane:
   // Saves the location of the cursor and the size of the chart box when mouse is pressed on a draggable area.
   onMousePressed = (event: MouseEvent) => {
     prefHeight = this.heightProperty().value
+
     if isResizable(event) then
       dragging = true
       startX = event.sceneX
       startY = event.sceneY
       originalWidth = prefWidth.value
       originalHeight = prefHeight.value
+      // Change the prefHeight of all chart areas on the same row in the FlowPane.
+      val yInScene = this.localToScene(this.getBoundsInLocal).getMinY
+      val onSameRow = this.getParent.asInstanceOf[JFlowPane].children
+        .map(_.asInstanceOf[JStackPane])
+        .filter( a => a.localToScene(a.getBoundsInLocal).getMinY == yInScene)
+      onSameRow.foreach( a => (a.setPrefHeight(this.prefHeight.value)))
   }
 
   // Changes the size of the chart box when mouse is dragged.
@@ -68,6 +77,12 @@ class ChartBox extends StackPane:
 
       prefWidth = newWidthValue
       prefHeight = newHeightValue
+      // Change the prefHeight of all chart areas on the same row in the FlowPane.
+      val yInScene = this.localToScene(this.getBoundsInLocal).getMinY
+      val onSameRow = this.getParent.asInstanceOf[JFlowPane].children
+        .map(_.asInstanceOf[JStackPane])
+        .filter( a => a.localToScene(a.getBoundsInLocal).getMinY == yInScene)
+      onSameRow.foreach( a => (a.setPrefHeight(this.prefHeight.value)))
   }
 
   // Sets dragging to false when mouse is released.
@@ -85,10 +100,31 @@ class ChartBox extends StackPane:
 
   // Container for contents in this chart box.
   private val contents = new BorderPane()
-  contents.padding = Insets(3, 3, 3, 3)
+  contents.padding = Insets(1, 0, 3, 3)
+
+  // Container for some buttons in the top area of the chart box.
+  private val topArea = new HBox(10)
+  topArea.padding = Insets(3, 3, 3, 3)
+  topArea.background = Background(Array(new BackgroundFill(Lime, CornerRadii.Empty, Insets.Empty)))
+  topArea.alignment = CenterRight
+  topArea.border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
+
+  // Button for removing the chart.
+  private val removeButton = new Button("Remove chart")
+  topArea.children += removeButton
+
+  // Remove this chart when remove button is clicked.
+  removeButton.setOnAction( _ =>
+    val parentArea = this.getParent.asInstanceOf[JFlowPane]
+    parentArea.children.removeAll(this)
+  )
+
+  // Add top area to the chart box.
+  contents.top = topArea
 
   // Container for ComboBoxes.
   private val leftVBox = new VBox(10)
+  leftVBox.padding = Insets(2, 2, 2, 2)
 
   // Map for chart types.
   private val chartMap = Map(
@@ -128,9 +164,10 @@ class ChartBox extends StackPane:
     // Creates a ComboBox and a loading indicator and adds them to the container.
     val clubSelection = new ComboBox[String]()
     clubSelection.promptText = "Select club"
-    clubSelection.maxWidth = 130
+    clubSelection.maxWidth = 120
     val loading = new ProgressIndicator()
     loading.prefHeight = 10
+    loading.prefWidth = 20
     clubSelectionContainer.children.addAll(clubSelection, loading)
 
     // Clubs wrapped in a Future.

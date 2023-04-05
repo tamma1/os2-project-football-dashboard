@@ -18,8 +18,8 @@ object DashboardApp extends JFXApp3:
     // Creates initial window.
     stage = new JFXApp3.PrimaryStage:
       title = "Football dashboard"
-      width = 1300
-      height = 800
+      width = 1400
+      height = 820
 
     // Adds root component to scene.
     val root = new BorderPane()
