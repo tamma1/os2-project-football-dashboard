@@ -118,16 +118,10 @@ class ChartBox extends StackPane:
   // ComboBoxes for selecting chart and data.
   private val leftVBox = new DataSelection()
 
-  // Map for chart types.
-  val chartMap = Map(
-    "Pie Chart" -> new MyPieChart(),
-    "Bar Chart" -> new MyBarChart(),
-    "Line Chart" -> new MyLineChart()
-  )
-
   // Adds the selected chart to contents.
   leftVBox.selectChart.value.onChange( (_, _, newValue) =>
     contents.center = leftVBox.chartMap(newValue)
+    leftVBox.selectedChart = newValue
     leftVBox.selectLeague.visible = true
   )
 

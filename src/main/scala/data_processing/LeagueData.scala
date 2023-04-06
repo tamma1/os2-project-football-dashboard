@@ -2,6 +2,7 @@ package data_processing
 
 import APIConnection.*
 
+// Object for processing league data.
 object LeagueData:
 
   // Receives data from a league in a specific season and returns a Response case class containing the data.
@@ -12,7 +13,7 @@ object LeagueData:
 
   // Stores the data received from the API.
   case class Response(private val initial: InitialResponse):
-    val teams = initial.response.map(t => t.team.name)
+    val teams = initial.response.map( t => (t.team.name, t.team.id) ).toMap
     val results = initial.results
 
   case class Team(

@@ -8,7 +8,6 @@ import io.circe.*, io.circe.parser.*, io.circe.syntax.*, io.circe.generic.auto.*
 import data_processing.LeagueData.{InitialResponse => LeagueInitialResponse}
 import data_processing.LeagueData.{Response => LeagueResponse}
 
-
 object APIConnection:
 
   // Fetches and provides the API key.
