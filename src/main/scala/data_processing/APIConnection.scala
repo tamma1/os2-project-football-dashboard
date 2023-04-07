@@ -5,8 +5,8 @@ import scala.util.{Failure, Success, Try}
 import requests.*
 import io.circe.parser.decode
 import io.circe.*, io.circe.parser.*, io.circe.syntax.*, io.circe.generic.auto.*
-import data_processing.LeagueData.{InitialResponse => LeagueInitialResponse}
-import data_processing.LeagueData.{Response => LeagueResponse}
+import LeagueData.{Response as LeagueResponse, InitialResponse as LeagueInitialResponse}
+import ClubData.{Response as ClubResponse,InitialResponse as ClubInitialResponse}
 
 object APIConnection:
 
@@ -45,6 +45,15 @@ object APIConnection:
   def decodeTeams(data: String) =
     decode[LeagueInitialResponse](data).toTry match
       case Success(result) => LeagueResponse(result)
+      case Failure(error) =>
+        Console.err.println("Invalid data received.")
+        error.printStackTrace()
+          throw error
+
+  // Decode team statistics data.
+  def decodeTeamStats(data: String) =
+    decode[ClubInitialResponse](data).toTry match
+      case Success(result) => ClubResponse(result)
       case Failure(error) =>
         Console.err.println("Invalid data received.")
         error.printStackTrace()

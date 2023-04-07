@@ -36,8 +36,6 @@ object LeagueData:
                   image: String
                   )
 
-  case class Errors(time: String, bug: String, report: String)
-
   case class InitialTeams(team: Team, venue: Venue)
 
   case class Parameters(league: String, season: String)
@@ -74,4 +72,4 @@ object LeagueData:
     "2021-2022" -> 2021,
     "2022-2023" -> 2022
   )
-    
+

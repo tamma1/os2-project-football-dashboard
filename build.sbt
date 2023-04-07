@@ -7,6 +7,8 @@ lazy val root = (project in file("."))
     scalaVersion := scala3Version,
   )
 
+scalacOptions ++= Seq("-Xmax-inlines", "50")
+
 libraryDependencies += "org.scalafx" % "scalafx_3" % "19.0.0-R30"
 
 libraryDependencies += "com.lihaoyi" %% "requests" % "0.8.0"
