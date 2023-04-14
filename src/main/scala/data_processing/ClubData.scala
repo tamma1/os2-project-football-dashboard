@@ -16,10 +16,19 @@ object ClubData:
 
   // Case class for handling club statistics
   case class Response(private val initial: InitialResponse):
+    // Number of results in the response.
     val results = initial.results
-    val wins = initial.response.fixtures.wins.total
-    val draws = initial.response.fixtures.draws.total
-    val loses = initial.response.fixtures.loses.total
+    // Wins, draws, loses and total matches played.
+    private val wins = initial.response.fixtures.wins.total
+    private val draws = initial.response.fixtures.draws.total
+    private val loses = initial.response.fixtures.loses.total
+    private val played = initial.response.fixtures.played
+    val fixtures = Map("Wins" -> wins, "Draws" -> draws, "Loses" -> loses, "Played" -> played)
+    // Goals scored and conceded by club.
+    private val scored = initial.response.goals.forClub.total.total
+    private val conceded = initial.response.goals.against.total.total
+    val goals = Map("Scored" -> scored, "Conceded" -> conceded, "Total" -> (scored + conceded))
+
 
   // Some case classes used to transform the JSON into a case class.
   case class Parameters(

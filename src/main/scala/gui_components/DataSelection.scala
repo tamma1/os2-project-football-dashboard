@@ -43,7 +43,6 @@ class DataSelection extends VBox:
   selectSeason.items = ObservableBuffer().concat(seasonMap.keys.toList.sorted)
   selectSeason.visible = false
 
-
   // Container for the loading icon and club selection list.
   private val clubSelectionContainer = new HBox()
   clubSelectionContainer.spacing = 3
@@ -52,14 +51,22 @@ class DataSelection extends VBox:
   clubSelectionContainer.children.addAll(selectClub, new ProgressIndicator())
   clubSelectionContainer.visible = false
 
-  // Add ComboBoxes to this selection area
-  this.children.addAll(selectChart, selectLeague, selectSeason, clubSelectionContainer)
+  // ComboBox for selecting data set.
+  private var selectClubData = new ComboBox[String]()
+  selectClubData.promptText = "Select data"
+  private val dataSets = List("Fixtures", "Goals")
+  selectClubData.items = ObservableBuffer().concat(dataSets)
+  selectClubData.visible = false
+
+  // Adds ComboBoxes to this selection area.
+  this.children.addAll(selectChart, selectLeague, selectSeason, clubSelectionContainer, selectClubData)
 
   // Container for selected data.
   var selectedChart = "Pie Chart"
   private var selectedLeague = "Premier League"
   private var selectedSeason = "2022-2023"
   private var selectedClub = "Arsenal"
+  private var selectedData = "Fixtures"
 
   // Method for updating the clubSelection.
   private def updateClubs() =
@@ -80,6 +87,7 @@ class DataSelection extends VBox:
     // Updates the selected club when a selection is made.
     clubSelection.value.onChange { (_, _, newValue) =>
       selectedClub = newValue
+      selectClubData.visible = true
     }
 
     // Clubs wrapped in a Future.
@@ -97,6 +105,15 @@ class DataSelection extends VBox:
         loading.visible = false
     }
 
+  // Updates the ComboBox that contains selectable data sets.
+  private def updateClubData() =
+    selectClubData.value.onChange { (_, _, newValue) =>
+      selectedData = newValue
+      selectClubData.visible = true
+      println(selectedData)
+    }
+
+
   // Adds a season selection and updates the selected league.
   selectLeague.value.onChange { (_, _, newValue) =>
     selectedLeague = newValue
@@ -109,5 +126,10 @@ class DataSelection extends VBox:
   selectSeason.value.onChange { (_, _, newValue) =>
     selectedSeason = newValue
     updateClubs()
+  }
+
+  // Updates the selected data set.
+  selectClubData.value.onChange { (_, _, newValue) =>
+    selectedData = newValue
   }
 
