@@ -17,6 +17,7 @@ class DataSelection extends VBox:
   // Adds spacing and padding.
   spacing = 5
   padding = Insets(2, 2, 2, 2)
+  maxWidth = 150
 
   // Map for chart types.
   val chartMap = Map(
@@ -46,7 +47,7 @@ class DataSelection extends VBox:
   // Container for the loading icon and club selection list.
   private val clubSelectionContainer = new HBox()
   clubSelectionContainer.spacing = 3
-  clubSelectionContainer.maxWidth = 140
+  clubSelectionContainer.maxWidth = 130
   private var selectClub = new ComboBox[String]()
   clubSelectionContainer.children.addAll(selectClub, new ProgressIndicator())
   clubSelectionContainer.visible = false
@@ -65,7 +66,8 @@ class DataSelection extends VBox:
     // Creates a ComboBox for selecting club.
     val clubSelection = new ComboBox[String]()
     clubSelection.promptText = "Select club"
-    clubSelection.maxWidth = 120
+    clubSelection.maxWidth = 110
+    clubSelection.disable = true
     // Creates a loading indicator.
     val loading = new ProgressIndicator()
     loading.prefHeight = 10
@@ -78,7 +80,6 @@ class DataSelection extends VBox:
     // Updates the selected club when a selection is made.
     clubSelection.value.onChange { (_, _, newValue) =>
       selectedClub = newValue
-      println(selectedClub)
     }
 
     // Clubs wrapped in a Future.
@@ -90,6 +91,7 @@ class DataSelection extends VBox:
       case Success(clubs) =>
         clubSelection.items = ObservableBuffer().concat(clubs)
         loading.visible = false
+        clubSelection.disable = false
       case Failure(exception) =>
         clubSelection.setPromptText("Error loading data")
         loading.visible = false

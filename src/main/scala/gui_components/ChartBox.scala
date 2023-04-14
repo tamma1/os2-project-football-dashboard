@@ -96,7 +96,7 @@ class ChartBox extends StackPane:
 
   // Container for contents in this chart box.
   private val contents = new BorderPane()
-  contents.padding = Insets(1, 0, 3, 3)
+  contents.padding = Insets(1, 1, 1, 1)
 
   // Container for some buttons in the top area of the chart box.
   private val topArea = new HBox(10)

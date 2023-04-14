@@ -35,10 +35,11 @@ object DashboardApp extends JFXApp3:
 
     // Sets background color and adds padding for top menu.
     topMenu.background = Background(Array(new BackgroundFill(Green, CornerRadii.Empty, Insets.Empty)))
-    topMenu.padding = Insets(4, 4, 4, 4)
+    topMenu.padding = Insets(6, 6, 6, 6)
 
     // Creates chart area.
-    val chartArea = new FlowPane(10, 10)
+    val chartArea = new FlowPane(8, 8)
+    chartArea.padding = Insets(8, 8, 8, 8)
 
     // Adds a new chart box to chart area when "add chart" -button is clicked.
     addChartButton.setOnAction( _ =>
