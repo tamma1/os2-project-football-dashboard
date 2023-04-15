@@ -2,6 +2,7 @@ package gui_components
 
 import data_processing.LeagueData.*
 import javafx.scene.layout.{FlowPane as JFlowPane, StackPane as JStackPane}
+import javafx.scene.control.ComboBox as JComboBox
 import scalafx.Includes.*
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.Insets
@@ -118,11 +119,24 @@ class ChartBox extends StackPane:
   // ComboBoxes for selecting chart and data.
   private val leftVBox = new DataSelection()
 
-  // Adds the selected chart to contents.
+  // Display the selected chart.
+  private var chart: MyChart = new MyPieChart()
   leftVBox.selectChart.value.onChange( (_, _, newValue) =>
-    contents.center = leftVBox.chartMap(newValue)
+    chart = leftVBox.chartMap(newValue)
+    contents.center = chart
     leftVBox.selectedChart = newValue
     leftVBox.selectLeague.visible = true
+  )
+
+  // Updates the chart when a new club is selected
+  leftVBox.selectedClubID.onChange( (_, _, newValue) =>
+    chart.updateData(leftVBox.selectedLeagueID, leftVBox.selectedSeasonID, newValue.intValue(), leftVBox.selectedData.value)
+    println(leftVBox.selectedClub)
+  )
+
+  // Updates the chart when a new data set is selected.
+  leftVBox.selectedData.onChange( (_, _, newValue) =>
+    chart.updateData(leftVBox.selectedLeagueID, leftVBox.selectedSeasonID, leftVBox.selectedClubID.value, newValue)
   )
 
   // Adds top area to the chart box.

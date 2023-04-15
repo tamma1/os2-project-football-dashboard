@@ -7,9 +7,12 @@ import scalafx.geometry.Insets
 import scalafx.scene.control
 import scalafx.scene.control.{ComboBox, ProgressIndicator}
 import scalafx.scene.layout.{HBox, VBox}
+import scalafx.beans.property.*
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 import scala.concurrent.ExecutionContext.Implicits.global
+import javafx.scene.layout.StackPane
+import scalafx.beans.value.ObservableValue
 
 
 // Container for ComboBoxes to select data.
@@ -20,7 +23,7 @@ class DataSelection extends VBox:
   maxWidth = 150
 
   // Map for chart types.
-  val chartMap = Map(
+  val chartMap: Map[String, MyChart] = Map(
     "Pie Chart" -> new MyPieChart(),
     "Bar Chart" -> new MyBarChart(),
     "Line Chart" -> new MyLineChart()
@@ -64,59 +67,65 @@ class DataSelection extends VBox:
   // Container for selected data.
   var selectedChart = "Pie Chart"
   private var selectedLeague = "Premier League"
+  var selectedLeagueID = 39
   private var selectedSeason = "2022-2023"
-  private var selectedClub = "Arsenal"
-  private var selectedData = "Fixtures"
+  var selectedSeasonID = 2022
+  var selectedClub = "Arsenal"
+  val selectedClubID = new IntegerProperty(this, "clubID", 42)
+  private var clubMap = Map[String, Int]()
+  val selectedData = new StringProperty(this, "data", "Fixtures")
 
   // Method for updating the clubSelection.
   private def updateClubs() =
     // Creates a ComboBox for selecting club.
-    val clubSelection = new ComboBox[String]()
-    clubSelection.promptText = "Select club"
-    clubSelection.maxWidth = 110
-    clubSelection.disable = true
+    selectClub = new ComboBox[String]()
+    selectClub.promptText = "Select club"
+    selectClub.maxWidth = 110
+    selectClub.disable = true
     // Creates a loading indicator.
     val loading = new ProgressIndicator()
     loading.prefHeight = 10
     loading.prefWidth = 20
     // Adds ComboBox and loading indicator to container.
-    clubSelectionContainer.children(0) = clubSelection
+    clubSelectionContainer.children(0) = selectClub
     clubSelectionContainer.children(1) = loading
     clubSelectionContainer.visible = true
 
     // Updates the selected club when a selection is made.
-    clubSelection.value.onChange { (_, _, newValue) =>
+    selectClub.value.onChange { (_, _, newValue) =>
       selectedClub = newValue
+      selectedClubID.set(clubMap(newValue))
       selectClubData.visible = true
     }
 
     // Clubs wrapped in a Future.
     val futureData = Future {
-      getLeagueData(leagueMap(selectedLeague), seasonMap(selectedSeason)).teams.keys.toList.sorted
+      getLeagueData(leagueMap(selectedLeague), seasonMap(selectedSeason)).teams
     }
     // Adds the clubs to the list when loaded from the Internet.
     futureData.onComplete {
       case Success(clubs) =>
-        clubSelection.items = ObservableBuffer().concat(clubs)
+        selectClub.items = ObservableBuffer().concat(clubs.keys.toList.sorted)
+        clubMap = clubs
         loading.visible = false
-        clubSelection.disable = false
+        selectClub.disable = false
       case Failure(exception) =>
-        clubSelection.setPromptText("Error loading data")
+        selectClub.setPromptText("Error loading data")
         loading.visible = false
     }
 
   // Updates the ComboBox that contains selectable data sets.
   private def updateClubData() =
     selectClubData.value.onChange { (_, _, newValue) =>
-      selectedData = newValue
+      selectedData.set(newValue)
       selectClubData.visible = true
-      println(selectedData)
     }
 
 
   // Adds a season selection and updates the selected league.
   selectLeague.value.onChange { (_, _, newValue) =>
     selectedLeague = newValue
+    selectedLeagueID = leagueMap(newValue)
     selectSeason.visible = true
     if selectSeason.value.value != null then
       updateClubs()
@@ -125,11 +134,12 @@ class DataSelection extends VBox:
   // Adds a ComboBox containing the clubs from the selected league and season.
   selectSeason.value.onChange { (_, _, newValue) =>
     selectedSeason = newValue
+    selectedSeasonID = seasonMap(newValue)
     updateClubs()
   }
 
   // Updates the selected data set.
   selectClubData.value.onChange { (_, _, newValue) =>
-    selectedData = newValue
+    selectedData.set(newValue)
   }
 

@@ -5,7 +5,7 @@ import scalafx.scene.chart.{LineChart, NumberAxis, XYChart}
 import scalafx.Includes._
 import javafx.scene.chart as JChart
 
-class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new NumberAxis()):
+class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new NumberAxis()) with MyChart:
   
   // Create some sample data.
   val dataBuf = ObservableBuffer[JChart.XYChart.Data[Number, Number]](
@@ -22,4 +22,6 @@ class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new Number
     data = dataBuf
   }
   this.getData.add(series)
+  
+  def updateData(leagueID: Int, seasonID: Int, clubID: Int, dataSet: String) = ???
 
