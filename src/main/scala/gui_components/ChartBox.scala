@@ -171,6 +171,8 @@ class ChartBox extends StackPane:
   leftVBox.selectedData.onChange( (_, _, newValue) =>
     chart.updateData(clubDataResponse.get, newValue)
     chart.updateTitle(leftVBox.selectedClub, leftVBox.selectedSeason, newValue)
+    this.prefWidth = this.getWidth + 1
+    this.prefWidth = this.getWidth - 1
   )
 
   // Adds top area to the chart box.

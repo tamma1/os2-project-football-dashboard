@@ -23,11 +23,15 @@ object ClubData:
     val draws = initial.response.fixtures.draws.total
     val loses = initial.response.fixtures.loses.total
     val played = initial.response.fixtures.played.total
-    val fixtures = Map("Wins" -> wins, "Draws" -> draws, "Loses" -> loses, "Played" -> played)
     // Goals scored and conceded by club.
     val scored = initial.response.goals.forClub.total.total
     val conceded = initial.response.goals.against.total.total
-    val goals = Map("Scored" -> scored, "Conceded" -> conceded, "Total" -> (scored + conceded))
+    // Results of a club in a season oredered
+    val form = initial.response.form
+    // Goals scored by minute
+    val goalsByMinute = initial.response.goals.forClub.minute
+      .productIterator.map(_.asInstanceOf[MinuteStats]).toList
+      .map( _.total.getOrElse(0) )
 
 
   // Some case classes used to transform the JSON into a case class.

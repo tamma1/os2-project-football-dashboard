@@ -14,6 +14,5 @@ trait MyChart extends Chart:
   def updateData(clubData: Response, dataSet: String): Unit
 
   // Updates the title of a chart.
-  def updateTitle(club: String, season: String, dataSet: String) =
-    title = dataSet + " of " + club + " in season " + season
+  def updateTitle(club: String, season: String, dataSet: String): Unit
 

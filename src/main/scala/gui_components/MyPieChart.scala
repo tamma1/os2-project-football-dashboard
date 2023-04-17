@@ -20,6 +20,10 @@ class MyPieChart extends PieChart with MyChart:
     else
       dataSeq = Seq(Data("Goals scored", clubData.scored), Data("Goals conceded", clubData.conceded))
     data = dataSeq
+    
+  // Updates the title of the chart.
+  def updateTitle(club: String, season: String, dataSet: String) =
+    title = dataSet + " of " + club + " in season " + season
 
 
 

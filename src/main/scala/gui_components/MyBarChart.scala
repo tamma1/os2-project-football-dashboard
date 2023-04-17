@@ -40,6 +40,10 @@ class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new Number
     // Adds new data.
     series.data = dataBuf
     this.data = series
+    
+  // Updates the title of the chart.
+  def updateTitle(club: String, season: String, dataSet: String) =
+    title = dataSet + " of " + club + " in season " + season
 
 
 
