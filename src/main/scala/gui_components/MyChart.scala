@@ -1,6 +1,5 @@
 package gui_components
 
-import scalafx.scene.Node
 import scalafx.scene.chart.Chart
 import data_processing.ClubData.Response
 
@@ -9,7 +8,7 @@ trait MyChart extends Chart:
 
   // Sets title and style for chart.
   title = "Selected data is displayed here"
-  style = "-fx-font-size: 9pt;"
+  style = "-fx-font-size: 8pt;"
 
   // Updates the data of a chart.
   def updateData(clubData: Response, dataSet: String): Unit

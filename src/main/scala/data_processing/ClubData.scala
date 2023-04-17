@@ -22,7 +22,7 @@ object ClubData:
     val wins = initial.response.fixtures.wins.total
     val draws = initial.response.fixtures.draws.total
     val loses = initial.response.fixtures.loses.total
-    val played = initial.response.fixtures.played
+    val played = initial.response.fixtures.played.total
     val fixtures = Map("Wins" -> wins, "Draws" -> draws, "Loses" -> loses, "Played" -> played)
     // Goals scored and conceded by club.
     val scored = initial.response.goals.forClub.total.total

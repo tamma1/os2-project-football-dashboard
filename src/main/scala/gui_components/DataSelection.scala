@@ -1,18 +1,18 @@
 package gui_components
 
 import data_processing.LeagueData.*
+import javafx.scene.layout.StackPane
+import scalafx.beans.property.*
+import scalafx.beans.value.ObservableValue
 import scalafx.collections.ObservableBuffer
 import scalafx.event.{ActionEvent, EventHandler}
 import scalafx.geometry.Insets
 import scalafx.scene.control
 import scalafx.scene.control.{ComboBox, ProgressIndicator}
 import scalafx.scene.layout.{HBox, VBox}
-import scalafx.beans.property.*
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
-import scala.concurrent.ExecutionContext.Implicits.global
-import javafx.scene.layout.StackPane
-import scalafx.beans.value.ObservableValue
 
 
 // Container for ComboBoxes to select data.

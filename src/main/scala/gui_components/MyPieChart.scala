@@ -1,10 +1,10 @@
 package gui_components
 
+import data_processing.ClubData.Response
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
 import scalafx.scene.chart.PieChart
 import scalafx.scene.chart.PieChart.Data
-import data_processing.ClubData.Response
 
 // Class for pie charts added to the dashboard.
 class MyPieChart extends PieChart with MyChart:

@@ -1,9 +1,10 @@
 package gui_components
 
 import data_processing.ClubData.*
-import javafx.scene.layout.{FlowPane as JFlowPane, StackPane as JStackPane}
 import javafx.scene.control.ComboBox as JComboBox
+import javafx.scene.layout.{FlowPane as JFlowPane, StackPane as JStackPane}
 import scalafx.Includes.*
+import scalafx.application.Platform
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.Insets
 import scalafx.geometry.Pos.*
@@ -12,10 +13,9 @@ import scalafx.scene.control.{Button, ComboBox, ProgressIndicator}
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color.*
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scalafx.application.Platform
 
 
 // Class for chart boxes that are added to the chart area.
@@ -130,6 +130,9 @@ class ChartBox extends StackPane:
     contents.center = chart
     leftVBox.selectedChart = newValue
     leftVBox.selectLeague.visible = true
+    if clubDataResponse.isDefined then
+      chart.updateData(clubDataResponse.get, newValue)
+      chart.updateTitle(leftVBox.selectedClub, leftVBox.selectedSeason, leftVBox.selectedData.value)
   )
 
   // Container for last club data response.

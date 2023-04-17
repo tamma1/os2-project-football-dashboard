@@ -1,10 +1,10 @@
 package gui_components
 
+import data_processing.ClubData.Response
+import javafx.scene.chart as JChart
+import scalafx.Includes.*
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.chart.{LineChart, NumberAxis, XYChart}
-import scalafx.Includes._
-import javafx.scene.chart as JChart
-import data_processing.ClubData.Response
 
 class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new NumberAxis()) with MyChart:
   

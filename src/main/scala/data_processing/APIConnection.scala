@@ -1,12 +1,14 @@
 package data_processing
 
+import data_processing.ClubData.{InitialResponse as ClubInitialResponse, Response as ClubResponse}
+import data_processing.LeagueData.{InitialResponse as LeagueInitialResponse, Response as LeagueResponse}
+import io.circe.*
+import io.circe.generic.auto.*
+import io.circe.parser.*
+import io.circe.syntax.*
+import requests.*
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
-import requests.*
-import io.circe.parser.decode
-import io.circe.*, io.circe.parser.*, io.circe.syntax.*, io.circe.generic.auto.*
-import LeagueData.{Response as LeagueResponse, InitialResponse as LeagueInitialResponse}
-import ClubData.{Response as ClubResponse,InitialResponse as ClubInitialResponse}
 
 object APIConnection:
 
