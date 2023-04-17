@@ -4,6 +4,7 @@ import scalafx.collections.ObservableBuffer
 import scalafx.scene.chart.{LineChart, NumberAxis, XYChart}
 import scalafx.Includes._
 import javafx.scene.chart as JChart
+import data_processing.ClubData.Response
 
 class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new NumberAxis()) with MyChart:
   
@@ -23,5 +24,7 @@ class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new Number
   }
   this.getData.add(series)
   
-  def updateData(leagueID: Int, seasonID: Int, clubID: Int, dataSet: String) = ???
+  // Adds the selected data to the chart.
+  def updateData(clubData: Response, dataSet: String) = ???
+  
 

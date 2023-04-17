@@ -4,6 +4,7 @@ import scalafx.collections.ObservableBuffer
 import scalafx.scene.chart.{CategoryAxis, NumberAxis, BarChart, XYChart}
 import scalafx.Includes._
 import javafx.scene.chart as JChart
+import data_processing.ClubData.Response
 
 // Class for bar charts added to the dashboard.
 class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new NumberAxis()) with MyChart:
@@ -20,6 +21,8 @@ class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new Number
   private val series = new XYChart.Series[String, Number] { data = dataBuf }
   this.getData.add(series)
 
-  def updateData(leagueID: Int, seasonID: Int, clubID: Int, dataSet: String): Unit = ???
+  // Adds the selected data to the chart.
+  def updateData(clubData: Response, dataSet: String) = ???
+
 
 

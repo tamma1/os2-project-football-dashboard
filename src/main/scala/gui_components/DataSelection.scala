@@ -55,7 +55,7 @@ class DataSelection extends VBox:
   clubSelectionContainer.visible = false
 
   // ComboBox for selecting data set.
-  private var selectClubData = new ComboBox[String]()
+  var selectClubData = new ComboBox[String]()
   selectClubData.promptText = "Select data"
   private val dataSets = List("Fixtures", "Goals")
   selectClubData.items = ObservableBuffer().concat(dataSets)
@@ -68,7 +68,7 @@ class DataSelection extends VBox:
   var selectedChart = "Pie Chart"
   private var selectedLeague = "Premier League"
   var selectedLeagueID = 39
-  private var selectedSeason = "2022-2023"
+  var selectedSeason = "2022-2023"
   var selectedSeasonID = 2022
   var selectedClub = "Arsenal"
   val selectedClubID = new IntegerProperty(this, "clubID", 42)
@@ -112,6 +112,7 @@ class DataSelection extends VBox:
       case Failure(exception) =>
         selectClub.setPromptText("Error loading data")
         loading.visible = false
+        throw exception
     }
 
   // Updates the ComboBox that contains selectable data sets.

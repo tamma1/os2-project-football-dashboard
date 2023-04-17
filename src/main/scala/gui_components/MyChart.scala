@@ -1,8 +1,20 @@
 package gui_components
 
 import scalafx.scene.Node
+import scalafx.scene.chart.Chart
+import data_processing.ClubData.Response
 
-trait MyChart extends Node:
+// Trait for updating different chart types.
+trait MyChart extends Chart:
 
-  def updateData(leagueID: Int, seasonID: Int, clubID: Int, dataSet: String): Unit
+  // Sets title and style for chart.
+  title = "Selected data is displayed here"
+  style = "-fx-font-size: 9pt;"
+
+  // Updates the data of a chart.
+  def updateData(clubData: Response, dataSet: String): Unit
+
+  // Updates the title of a chart.
+  def updateTitle(club: String, season: String, dataSet: String) =
+    title = dataSet + " of " + club + " in season " + season
 

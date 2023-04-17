@@ -1,6 +1,6 @@
 package gui_components
 
-import data_processing.LeagueData.*
+import data_processing.ClubData.*
 import javafx.scene.layout.{FlowPane as JFlowPane, StackPane as JStackPane}
 import javafx.scene.control.ComboBox as JComboBox
 import scalafx.Includes.*
@@ -12,19 +12,23 @@ import scalafx.scene.control.{Button, ComboBox, ProgressIndicator}
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color.*
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scalafx.application.Platform
 
 
 // Class for chart boxes that are added to the chart area.
 class ChartBox extends StackPane:
 
   // Sets height, width and color.
-  minWidth = 330
+  minWidth = 360
   minHeight = 160
-  prefWidth = 400
+  prefWidth = 550
   prefHeight = 200
   background = new Background(Array(new BackgroundFill(White, CornerRadii.Empty, Insets.Empty)))
   border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
-  alignment = TopLeft
+  alignment = Center
 
   // Some variables for saving values.
   private var dragging = false
@@ -128,15 +132,42 @@ class ChartBox extends StackPane:
     leftVBox.selectLeague.visible = true
   )
 
-  // Updates the chart when a new club is selected
+  // Container for last club data response.
+  private var clubDataResponse: Option[Response] = None
+
+  // Updates the chart when a new club is selected.
   leftVBox.selectedClubID.onChange( (_, _, newValue) =>
-    chart.updateData(leftVBox.selectedLeagueID, leftVBox.selectedSeasonID, newValue.intValue(), leftVBox.selectedData.value)
-    println(leftVBox.selectedClub)
-  )
+    // Disable this chart box and add a progress indicator when data is being fetched from internet.
+    this.disable = true
+    val loading = new ProgressIndicator()
+    this.children += loading
+    // Update the chart when data is loaded.
+    val newData = Future { getClubData(leftVBox.selectedLeagueID, leftVBox.selectedSeasonID, newValue.intValue()) }
+    newData.onComplete {
+      case Success(clubData) =>
+        Platform.runLater {
+          chart.updateData(clubData, leftVBox.selectedData.value)
+          chart.updateTitle(leftVBox.selectedClub, leftVBox.selectedSeason, leftVBox.selectedData.value)
+          clubDataResponse = Some(clubData)
+          this.children.dropRightInPlace(1)
+          this.disable = false
+          this.prefWidth = this.getWidth + 1
+          this.prefWidth = this.getWidth - 1
+        }
+      case Failure(exception) =>
+        Platform.runLater {
+          chart.title = "Error loading data"
+          this.disable = false
+          this.children.dropRightInPlace(0)
+        }
+        throw exception
+      }
+    )
 
   // Updates the chart when a new data set is selected.
   leftVBox.selectedData.onChange( (_, _, newValue) =>
-    chart.updateData(leftVBox.selectedLeagueID, leftVBox.selectedSeasonID, leftVBox.selectedClubID.value, newValue)
+    chart.updateData(clubDataResponse.get, newValue)
+    chart.updateTitle(leftVBox.selectedClub, leftVBox.selectedSeason, newValue)
   )
 
   // Adds top area to the chart box.
