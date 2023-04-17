@@ -54,3 +54,27 @@ In total, I have spent about 15 hours on the project during the last two weeks.
 
 I'm a bit behind the stage I had planned.
 
+****************************************************************************************************************************************
+
+Mon 17.4.
+
+During the last two weeks, I have worked on adding the selected data to charts.
+
+I created a new clubData object, which fetches club statistics from the API. I also added a trait class for charts to update the data
+and title in different charts. In general, the dashboard works ok, and it can be used to display and compare different kinds of football
+data.
+
+The project is still lacking a lot of features I had planned and I won't have time to implement all of them. However, I should be able to
+implement the moderate project requirements, like loading and saving the dashboard to files, and adding cards to the dashboard.
+
+I have only written one new test for checking if fetching club data from the API works properly. I have also tested the GUI by hand in
+different scenarios.
+
+I had some problems with the JSON that was returned from the API, because it had words like "for" and numbers as object names. I also
+had to do some things in the GUI in a more difficult way than I would have wanted, because ScalaFX wasn't working as I intended.
+
+In total, I have spent about 20 hours on the project during the last two weeks.
+
+I'm a bit behind the stage I had planned.
+
+
