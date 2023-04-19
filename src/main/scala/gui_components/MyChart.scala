@@ -2,6 +2,9 @@ package gui_components
 
 import scalafx.scene.chart.Chart
 import data_processing.ClubData.Response
+import scalafx.geometry.Insets
+import scalafx.scene.layout.{Background, BackgroundFill, CornerRadii}
+import scalafx.scene.paint.Color.*
 
 // Trait for updating different chart types.
 trait MyChart extends Chart:
@@ -9,6 +12,7 @@ trait MyChart extends Chart:
   // Sets title and style for chart.
   title = "Selected data is displayed here"
   style = "-fx-font-size: 8pt;"
+  background = Background(Array(new BackgroundFill(LightGreen, CornerRadii.Empty, Insets.Empty)))
 
   // Updates the data of a chart.
   def updateData(clubData: Response, dataSet: String): Unit

@@ -16,7 +16,7 @@ class MyPieChart extends PieChart with MyChart:
   // Adds the selected data to the chart.
   def updateData(clubData: Response, dataSet: String) =
     if dataSet == "Fixtures" then
-      dataSeq = Seq(Data("Wins", clubData.wins), Data("Draws", clubData.draws), Data("Loses", clubData.loses))
+      dataSeq = Seq(Data("Wins", clubData.wins), Data("Draws", clubData.draws), Data("Losses", clubData.loses))
     else
       dataSeq = Seq(Data("Goals scored", clubData.scored), Data("Goals conceded", clubData.conceded))
     data = dataSeq

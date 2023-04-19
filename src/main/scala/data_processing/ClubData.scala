@@ -1,6 +1,7 @@
 package data_processing
 
 import APIConnection.*
+import scala.math.*
 
 // Object for processing club data.
 object ClubData:
@@ -18,20 +19,43 @@ object ClubData:
   case class Response(private val initial: InitialResponse):
     // Number of results in the response.
     val results = initial.results
+
     // Wins, draws, loses and total matches played.
     val wins = initial.response.fixtures.wins.total
     val draws = initial.response.fixtures.draws.total
     val loses = initial.response.fixtures.loses.total
     val played = initial.response.fixtures.played.total
-    // Goals scored and conceded by club.
+
+    // Calculations for fixture.
+    val form = initial.response.form
+    val formToPoints = form.map( c =>
+        if c == 'W' then 3
+        else if c == 'D' then 1
+        else 0)
+    val totalPoints = formToPoints.sum
+    private val averagePointsPerGame = totalPoints.toDouble / form.length
+    val averagePointsRounded = BigDecimal(averagePointsPerGame).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
+    val longestWinStreak = initial.response.biggest.streak.wins
+    val longestLosingStreak = initial.response.biggest.streak.loses
+    private val pointsStandardDeviation =
+      val dividend = formToPoints.map( x => pow(x - averagePointsPerGame, 2) ).sum
+      sqrt(dividend / form.length)
+    val pointsStandardDeviationRounded = BigDecimal(pointsStandardDeviation).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
+
+    // Calculations for goals.
     val scored = initial.response.goals.forClub.total.total
     val conceded = initial.response.goals.against.total.total
-    // Results of a club in a season oredered
-    val form = initial.response.form
-    // Goals scored by minute
     val goalsByMinute = initial.response.goals.forClub.minute
       .productIterator.map(_.asInstanceOf[MinuteStats]).toList
       .map( _.total.getOrElse(0) )
+    val averageGoalsPerGame = initial.response.goals.forClub.average.total
+    private val mostGoalsHome = initial.response.biggest.goals.forClub.home
+    private val mostGoalsAway = initial.response.biggest.goals.forClub.away
+    val mostGoalsInAGame = if mostGoalsAway > mostGoalsHome then mostGoalsAway else mostGoalsHome
+    private val mostGoalsConcededHome = initial.response.biggest.goals.against.home
+    private val mostGoalsConcededAway = initial.response.biggest.goals.against.away
+    val mostGoalsConcededInAGame = if mostGoalsConcededAway > mostGoalsConcededHome then mostGoalsConcededAway else mostGoalsConcededHome
+
 
 
   // Some case classes used to transform the JSON into a case class.

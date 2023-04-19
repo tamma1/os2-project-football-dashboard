@@ -22,10 +22,10 @@ import scala.util.{Failure, Success}
 class ChartBox extends StackPane:
 
   // Sets height, width and color.
-  minWidth = 360
-  minHeight = 160
+  minWidth = 520
+  minHeight = 210
   prefWidth = 550
-  prefHeight = 200
+  prefHeight = 250
   background = new Background(Array(new BackgroundFill(White, CornerRadii.Empty, Insets.Empty)))
   border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
   alignment = Center
@@ -36,7 +36,7 @@ class ChartBox extends StackPane:
   private var startY = 0.0
   private var originalWidth = prefWidth.value
   private var originalHeight = prefHeight.value
-  private val resizeMargin = 15
+  private val resizeMargin = 10
 
   // Changes the look of the cursor when hovering on a draggable area.
   onMouseMoved = (event: MouseEvent) => {
@@ -69,13 +69,10 @@ class ChartBox extends StackPane:
     if dragging then
       val deltaX = event.sceneX - startX
       val deltaY = event.sceneY - startY
-
       val minWidthValue = minWidth.toDouble + resizeMargin * 2
       val minHeightValue = minHeight.toDouble + resizeMargin * 2
-
       val newWidthValue = math.max(minWidthValue, originalWidth + deltaX)
       val newHeightValue = math.max(minHeightValue, originalHeight + deltaY)
-
       prefWidth = newWidthValue
       prefHeight = newHeightValue
       // Change the prefHeight of all chart areas on the same row in the FlowPane.
@@ -97,7 +94,7 @@ class ChartBox extends StackPane:
     val heightValue = height.toDouble
     val right = widthValue - resizeMargin
     val bottom = heightValue - resizeMargin
-    x > right && x < widthValue && y > bottom && x > minWidth.toDouble && y > minHeight.toDouble
+    x > right || y > bottom
 
   // Container for contents in this chart box.
   private val contents = new BorderPane()
@@ -106,7 +103,7 @@ class ChartBox extends StackPane:
   // Container for some buttons in the top area of the chart box.
   private val topArea = new HBox(10)
   topArea.padding = Insets(1, 1, 1, 1)
-  topArea.background = Background(Array(new BackgroundFill(Lime, CornerRadii.Empty, Insets.Empty)))
+  topArea.background = Background(Array(new BackgroundFill(Green, CornerRadii.Empty, Insets.Empty)))
   topArea.alignment = CenterRight
   topArea.border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
 
@@ -120,6 +117,9 @@ class ChartBox extends StackPane:
     parentArea.children.removeAll(this)
   )
 
+  // Card for displaying additional information
+  private val card = new Card()
+
   // ComboBoxes for selecting chart and data.
   private val leftVBox = new DataSelection()
 
@@ -131,11 +131,12 @@ class ChartBox extends StackPane:
     leftVBox.selectedChart = newValue
     leftVBox.selectLeague.visible = true
     if clubDataResponse.isDefined then
-      chart.updateData(clubDataResponse.get, newValue)
+      chart.updateData(clubDataResponse.get, leftVBox.selectedData.value)
       chart.updateTitle(leftVBox.selectedClub, leftVBox.selectedSeason, leftVBox.selectedData.value)
+      card.updateText(clubDataResponse.get, leftVBox.selectedData.value, newValue)
   )
 
-  // Container for last club data response.
+  // Container for the last club data response.
   private var clubDataResponse: Option[Response] = None
 
   // Updates the chart when a new club is selected.
@@ -151,6 +152,7 @@ class ChartBox extends StackPane:
         Platform.runLater {
           chart.updateData(clubData, leftVBox.selectedData.value)
           chart.updateTitle(leftVBox.selectedClub, leftVBox.selectedSeason, leftVBox.selectedData.value)
+          card.updateText(clubData, leftVBox.selectedData.value, leftVBox.selectedChart)
           clubDataResponse = Some(clubData)
           this.children.dropRightInPlace(1)
           this.disable = false
@@ -169,17 +171,18 @@ class ChartBox extends StackPane:
 
   // Updates the chart when a new data set is selected.
   leftVBox.selectedData.onChange( (_, _, newValue) =>
-    chart.updateData(clubDataResponse.get, newValue)
-    chart.updateTitle(leftVBox.selectedClub, leftVBox.selectedSeason, newValue)
-    this.prefWidth = this.getWidth + 1
-    this.prefWidth = this.getWidth - 1
+    if clubDataResponse.isDefined then
+      chart.updateData(clubDataResponse.get, newValue)
+      chart.updateTitle(leftVBox.selectedClub, leftVBox.selectedSeason, newValue)
+      card.updateText(clubDataResponse.get, newValue, leftVBox.selectedChart)
+      this.prefWidth = this.getWidth + 1
+      this.prefWidth = this.getWidth - 1
   )
 
-  // Adds top area to the chart box.
+  // Adds top, left and right area to the chart box.
   contents.top = topArea
-
-  // Adds ComboBoxes to contents.
   contents.left = leftVBox
+  contents.right = card
 
   // Adds the contents to this chart area.
   this.children += contents

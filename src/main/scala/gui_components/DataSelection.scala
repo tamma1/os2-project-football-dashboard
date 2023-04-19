@@ -20,7 +20,7 @@ class DataSelection extends VBox:
   // Adds spacing and padding.
   spacing = 5
   padding = Insets(2, 2, 2, 2)
-  maxWidth = 150
+  maxWidth = 130
 
   // Map for chart types.
   val chartMap: Map[String, MyChart] = Map(
@@ -55,7 +55,7 @@ class DataSelection extends VBox:
   clubSelectionContainer.visible = false
 
   // ComboBox for selecting data set.
-  var selectClubData = new ComboBox[String]()
+  private var selectClubData = new ComboBox[String]()
   selectClubData.promptText = "Select data"
   private val dataSets = List("Fixtures", "Goals")
   selectClubData.items = ObservableBuffer().concat(dataSets)
@@ -80,7 +80,6 @@ class DataSelection extends VBox:
     // Creates a ComboBox for selecting club.
     selectClub = new ComboBox[String]()
     selectClub.promptText = "Select club"
-    selectClub.maxWidth = 110
     selectClub.disable = true
     // Creates a loading indicator.
     val loading = new ProgressIndicator()
@@ -121,7 +120,6 @@ class DataSelection extends VBox:
       selectedData.set(newValue)
       selectClubData.visible = true
     }
-
 
   // Adds a season selection and updates the selected league.
   selectLeague.value.onChange { (_, _, newValue) =>

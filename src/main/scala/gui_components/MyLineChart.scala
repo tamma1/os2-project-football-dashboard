@@ -7,39 +7,42 @@ import scalafx.collections.ObservableBuffer
 import scalafx.scene.chart.{LineChart, NumberAxis, XYChart}
 
 class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new NumberAxis()) with MyChart:
-  
+
   // Create some sample data.
   private var dataBuf = ObservableBuffer[JChart.XYChart.Data[Number, Number]](
     XYChart.Data(1.0, 2.0),
     XYChart.Data(2.0, 4.0)
   )
 
-  // Create a series from the data and adds it to the chart.
+  // Creates a series from the sample data and adds it to the chart.
   private val series = new XYChart.Series[Number, Number] { data = dataBuf }
   this.data = series
 
   // Adds the selected data to the chart.
   def updateData(clubData: Response, dataSet: String) =
     dataBuf = ObservableBuffer[JChart.XYChart.Data[Number, Number]]()
+
     // Form during the season.
     if dataSet == "Fixtures" then
-      // Convertt form to points.
-      val formToPoints = clubData.form.map( c =>
-        if c == 'W' then 3
-        else if c == 'D' then 1
-        else 0)
-      // Stores the data points.
+      // Sets x- and y-axis names.
+      this.getXAxis.setLabel("Games played")
+      this.getYAxis.setLabel("Points per game")
+      // Sets data.
+      val form = clubData.formToPoints
       val formData =
-        var count = 0
-        for (c, i) <- formToPoints.zipWithIndex do
-          count = count + c
-          dataBuf += XYChart.Data(i + 1, count)
+        for (c, i) <- form.zipWithIndex do
+          dataBuf += XYChart.Data(i + 1, c)
+
     // Goals scored by minute.
     else
+      // Sets x- and y-axis names.
+      this.getXAxis.setLabel("Time (end of 15 minute interval)")
+      this.getYAxis.setLabel("Goals scored")
+      // Sets data.
       for (x, i) <- clubData.goalsByMinute.zipWithIndex do
         dataBuf += XYChart.Data((i + 1) * 15, x)
 
-    // Add new data.
+    // Adds new data.
     series.data = dataBuf
     this.data = series
 

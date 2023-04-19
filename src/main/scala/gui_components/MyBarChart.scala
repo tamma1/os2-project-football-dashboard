@@ -25,22 +25,23 @@ class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new Number
   def updateData(clubData: Response, dataSet: String) =
     // Fixtures data
     if dataSet == "Fixtures" then
+      this.getYAxis.setLabel("Games")
       dataBuf = ObservableBuffer[JChart.XYChart.Data[String, Number]](
-        XYChart.Data("wins", clubData.wins),
-        XYChart.Data("draws", clubData.draws),
-        XYChart.Data("loses", clubData.loses),
-        XYChart.Data("played", clubData.played)
+        XYChart.Data("Wins", clubData.wins),
+        XYChart.Data("Draws", clubData.draws),
+        XYChart.Data("Losses", clubData.loses),
       )
     // Goals data
     else
+      this.getYAxis.setLabel("Goals")
       dataBuf = ObservableBuffer[JChart.XYChart.Data[String, Number]](
-        XYChart.Data("scored", clubData.scored),
-        XYChart.Data("conceded", clubData.conceded)
+        XYChart.Data("Scored", clubData.scored),
+        XYChart.Data("Conceded", clubData.conceded)
       )
     // Adds new data.
     series.data = dataBuf
     this.data = series
-    
+
   // Updates the title of the chart.
   def updateTitle(club: String, season: String, dataSet: String) =
     title = dataSet + " of " + club + " in season " + season
