@@ -9,7 +9,8 @@ import scalafx.event.{ActionEvent, EventHandler}
 import scalafx.geometry.Insets
 import scalafx.scene.control
 import scalafx.scene.control.{ComboBox, ProgressIndicator}
-import scalafx.scene.layout.{HBox, VBox}
+import scalafx.scene.layout.*
+import scalafx.scene.paint.Color.*
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -22,6 +23,7 @@ class DataSelection extends VBox:
   padding = Insets(2, 2, 2, 2)
   maxWidth = 120
   style = "-fx-font-size: 9pt;"
+  border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
 
   // Map for chart types.
   val chartMap: Map[String, MyChart] = Map(

@@ -107,9 +107,9 @@ class ChartBox extends StackPane:
   topArea.alignment = CenterRight
   topArea.border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
 
-  // Button for removing the chart.
+  // Button for removing the chart box.
   private val removeButton = new Button("Remove chart")
-  topArea.children += removeButton
+  topArea.children.addAll(removeButton)
 
   // Remove this chart when remove button is clicked.
   removeButton.setOnAction( _ =>

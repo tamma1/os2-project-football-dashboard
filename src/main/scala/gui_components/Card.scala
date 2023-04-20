@@ -1,6 +1,6 @@
 package gui_components
 
-import scalafx.scene.layout.{Background, BackgroundFill, CornerRadii, VBox}
+import scalafx.scene.layout.*
 import scalafx.scene.control.Label
 import data_processing.ClubData.Response
 import scalafx.collections.ObservableBuffer
@@ -14,6 +14,7 @@ class Card extends VBox:
   padding = Insets(2, 2, 2, 2)
   spacing = 3
   children += MyLabel("Additional data is displayed here")
+  border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
 
   def updateText(clubData: Response, dataSet: String, chart: String) =
     this.children = ObservableBuffer()
