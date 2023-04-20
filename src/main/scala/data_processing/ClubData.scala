@@ -26,35 +26,45 @@ object ClubData:
     val loses = initial.response.fixtures.loses.total
     val played = initial.response.fixtures.played.total
 
-    // Calculations for fixture.
+    // Calculations for fixtures.
     val form = initial.response.form
     val formToPoints = form.map( c =>
         if c == 'W' then 3
         else if c == 'D' then 1
         else 0)
     val totalPoints = formToPoints.sum
-    private val averagePointsPerGame = totalPoints.toDouble / form.length
+    private val averagePointsPerGame = totalPoints.toDouble / played
     val averagePointsRounded = BigDecimal(averagePointsPerGame).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
     val longestWinStreak = initial.response.biggest.streak.wins
     val longestLosingStreak = initial.response.biggest.streak.loses
     private val pointsStandardDeviation =
       val dividend = formToPoints.map( x => pow(x - averagePointsPerGame, 2) ).sum
-      sqrt(dividend / form.length)
+      sqrt(dividend / played)
     val pointsStandardDeviationRounded = BigDecimal(pointsStandardDeviation).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
 
     // Calculations for goals.
     val scored = initial.response.goals.forClub.total.total
     val conceded = initial.response.goals.against.total.total
-    val goalsByMinute = initial.response.goals.forClub.minute
+    private val minuteList = initial.response.goals.forClub.minute
       .productIterator.map(_.asInstanceOf[MinuteStats]).toList
-      .map( _.total.getOrElse(0) )
+    val goalsByMinute = minuteList.map( _.total.getOrElse(0) )
     val averageGoalsPerGame = initial.response.goals.forClub.average.total
+    val averageConcededPerGame = initial.response.goals.against.average.total
     private val mostGoalsHome = initial.response.biggest.goals.forClub.home
     private val mostGoalsAway = initial.response.biggest.goals.forClub.away
     val mostGoalsInAGame = if mostGoalsAway > mostGoalsHome then mostGoalsAway else mostGoalsHome
     private val mostGoalsConcededHome = initial.response.biggest.goals.against.home
     private val mostGoalsConcededAway = initial.response.biggest.goals.against.away
     val mostGoalsConcededInAGame = if mostGoalsConcededAway > mostGoalsConcededHome then mostGoalsConcededAway else mostGoalsConcededHome
+    val mostGoalsInInterval = goalsByMinute.max
+    private val mostGoalsIndex = goalsByMinute.indexOf(mostGoalsInInterval)
+    val intervalWithMostGoals =
+      val firstNumber = if mostGoalsIndex == 0 then "0" else (mostGoalsIndex * 15 + 1).toString
+      val secondNumber = ((mostGoalsIndex + 1) * 15).toString
+      firstNumber + "-" + secondNumber
+    val mostGoalsPercentage =
+      val percentageList = minuteList.map( _.percentage.getOrElse("0.0%") )
+      percentageList(mostGoalsIndex)
 
 
 

@@ -21,11 +21,11 @@ import scala.util.{Failure, Success}
 // Class for chart boxes that are added to the chart area.
 class ChartBox extends StackPane:
 
-  // Sets height, width and color.
-  minWidth = 520
-  minHeight = 210
-  prefWidth = 550
-  prefHeight = 250
+  // Sets some properties for the chart box.
+  minWidth = 550
+  minHeight = 200
+  prefWidth = 670
+  prefHeight = 280
   background = new Background(Array(new BackgroundFill(White, CornerRadii.Empty, Insets.Empty)))
   border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
   alignment = Center

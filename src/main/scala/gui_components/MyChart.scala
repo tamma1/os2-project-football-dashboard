@@ -10,7 +10,7 @@ import scalafx.scene.paint.Color.*
 trait MyChart extends Chart:
 
   // Sets title and style for chart.
-  title = "Selected data is displayed here"
+  title = "Selected chart is displayed here"
   style = "-fx-font-size: 8pt;"
   background = Background(Array(new BackgroundFill(LightGreen, CornerRadii.Empty, Insets.Empty)))
 

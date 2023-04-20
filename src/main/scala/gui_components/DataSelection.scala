@@ -17,10 +17,11 @@ import scala.util.{Failure, Success}
 
 // Container for ComboBoxes to select data.
 class DataSelection extends VBox:
-  // Adds spacing and padding.
+  // Sets some properties.
   spacing = 5
   padding = Insets(2, 2, 2, 2)
-  maxWidth = 130
+  maxWidth = 120
+  style = "-fx-font-size: 9pt;"
 
   // Map for chart types.
   val chartMap: Map[String, MyChart] = Map(
@@ -65,13 +66,13 @@ class DataSelection extends VBox:
   this.children.addAll(selectChart, selectLeague, selectSeason, clubSelectionContainer, selectClubData)
 
   // Container for selected data.
-  var selectedChart = "Pie Chart"
-  private var selectedLeague = "Premier League"
+  var selectedChart = ""
+  private var selectedLeague = ""
   var selectedLeagueID = 39
-  var selectedSeason = "2022-2023"
+  var selectedSeason = ""
   var selectedSeasonID = 2022
-  var selectedClub = "Arsenal"
-  val selectedClubID = new IntegerProperty(this, "clubID", 42)
+  var selectedClub = ""
+  val selectedClubID = new IntegerProperty(this, "clubID", -1)
   private var clubMap = Map[String, Int]()
   val selectedData = new StringProperty(this, "data", "Fixtures")
 
