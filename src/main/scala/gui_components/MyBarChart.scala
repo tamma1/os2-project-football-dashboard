@@ -5,6 +5,7 @@ import javafx.scene.chart as JChart
 import scalafx.Includes.*
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.chart.{BarChart, CategoryAxis, NumberAxis, XYChart}
+import scalafx.scene.control.Tooltip
 
 // Class for bar charts added to the dashboard.
 class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new NumberAxis()) with MyChart:
@@ -41,6 +42,17 @@ class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new Number
     // Adds new data.
     series.data = dataBuf
     this.data = series
+
+    // Adds tooltip to chart.
+    for (d <- dataBuf) do
+      val tooltip = new Tooltip(d.XValue.value + ": " + d.YValue.value.intValue())
+      Tooltip.install(d.getNode: scalafx.scene.Node, tooltip)
+      d.getNode.setOnMouseEntered(event =>
+        tooltip.show(d.getNode, event.getSceneX, event.getSceneY + 40)
+      )
+      d.getNode.setOnMouseExited(event =>
+        tooltip.hide()
+      )
 
   // Updates the title of the chart.
   def updateTitle(club: String, season: String, dataSet: String) =

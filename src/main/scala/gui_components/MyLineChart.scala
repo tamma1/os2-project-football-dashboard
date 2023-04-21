@@ -5,6 +5,7 @@ import javafx.scene.chart as JChart
 import scalafx.Includes.*
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.chart.{LineChart, NumberAxis, XYChart}
+import scalafx.scene.control.Tooltip
 
 class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new NumberAxis()) with MyChart:
 
@@ -25,8 +26,8 @@ class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new Number
     // Form during the season.
     if dataSet == "Fixtures" then
       // Sets x- and y-axis names.
-      this.getXAxis.setLabel("Games played")
-      this.getYAxis.setLabel("Points per game")
+      this.getXAxis.setLabel("Game number")
+      this.getYAxis.setLabel("Points in game")
       // Sets data.
       val form = clubData.formToPoints
       val formData =
@@ -45,6 +46,19 @@ class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new Number
     // Adds new data.
     series.data = dataBuf
     this.data = series
+
+    // Adds tooltip to chart.
+    for (d <- dataBuf) do
+      val tooltip = new Tooltip(
+        this.getXAxis.getLabel + ": " + d.getXValue.intValue() + "\n" + this.getYAxis.getLabel + ": " + d.getYValue.intValue()
+      )
+      Tooltip.install(d.getNode: scalafx.scene.Node, tooltip)
+      d.getNode.setOnMouseEntered(event =>
+        tooltip.show(d.getNode, event.getSceneX, event.getSceneY + 30)
+      )
+      d.getNode.setOnMouseExited(event =>
+        tooltip.hide()
+      )
 
   // Updates the title of the chart.
   def updateTitle(club: String, season: String, dataSet: String) =

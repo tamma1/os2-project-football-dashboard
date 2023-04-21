@@ -103,7 +103,7 @@ class ChartBox extends StackPane:
   // Container for some buttons in the top area of the chart box.
   private val topArea = new HBox(10)
   topArea.padding = Insets(1, 1, 1, 1)
-  topArea.background = Background(Array(new BackgroundFill(Green, CornerRadii.Empty, Insets.Empty)))
+  topArea.background = Background(Array(new BackgroundFill(ForestGreen, CornerRadii.Empty, Insets.Empty)))
   topArea.alignment = CenterRight
   topArea.border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
 

@@ -12,7 +12,7 @@ trait MyChart extends Chart:
   // Sets title and style for chart.
   title = "Selected chart is displayed here"
   style = "-fx-font-size: 8pt;"
-  background = Background(Array(new BackgroundFill(LightGreen, CornerRadii.Empty, Insets.Empty)))
+  background = Background(Array(new BackgroundFill(PaleGreen, CornerRadii.Empty, Insets.Empty)))
 
   // Updates the data of a chart.
   def updateData(clubData: Response, dataSet: String): Unit
