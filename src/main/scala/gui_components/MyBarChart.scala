@@ -24,6 +24,7 @@ class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new Number
 
   // Adds the selected data to the chart.
   def updateData(clubData: Response, dataSet: String) =
+
     // Fixtures data
     if dataSet == "Fixtures" then
       this.getYAxis.setLabel("Games")
@@ -32,6 +33,13 @@ class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new Number
         XYChart.Data("Draws", clubData.draws),
         XYChart.Data("Losses", clubData.loses),
       )
+    // Cards data
+    else if dataSet == "Cards" then
+      this.getYAxis.setLabel("Cards received")
+      dataBuf = ObservableBuffer[JChart.XYChart.Data[String, Number]](
+        XYChart.Data("Yellow cards", clubData.totalYellows),
+        XYChart.Data("Red cards", clubData.totalReds)
+      )
     // Goals data
     else
       this.getYAxis.setLabel("Goals")
@@ -39,16 +47,16 @@ class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new Number
         XYChart.Data("Scored", clubData.scored),
         XYChart.Data("Conceded", clubData.conceded)
       )
-    // Adds new data.
+    // Adds new data to chart.
     series.data = dataBuf
     this.data = series
 
     // Adds tooltip to chart.
-    for (d <- dataBuf) do
+    for d <- dataBuf do
       val tooltip = new Tooltip(d.XValue.value + ": " + d.YValue.value.intValue())
       Tooltip.install(d.getNode: scalafx.scene.Node, tooltip)
       d.getNode.setOnMouseEntered(event =>
-        tooltip.show(d.getNode, event.getSceneX, event.getSceneY + 40)
+        tooltip.show(d.getNode, event.getSceneX, event.getSceneY + 30)
       )
       d.getNode.setOnMouseExited(event =>
         tooltip.hide()

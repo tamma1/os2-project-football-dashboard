@@ -60,7 +60,7 @@ class DataSelection extends VBox:
   // ComboBox for selecting data set.
   private var selectClubData = new ComboBox[String]()
   selectClubData.promptText = "Select data"
-  private val dataSets = List("Fixtures", "Goals")
+  private val dataSets = List("Fixtures", "Goals", "Cards")
   selectClubData.items = ObservableBuffer().concat(dataSets)
   selectClubData.visible = false
 

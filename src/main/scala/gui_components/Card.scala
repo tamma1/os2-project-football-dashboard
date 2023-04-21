@@ -33,6 +33,22 @@ class Card extends VBox:
       if chart == "Line Chart" then
         val standardDeviation = MyLabel("Standard deviation: " + clubData.pointsStandardDeviationRounded)
         this.children += standardDeviation
+
+    // Additional text for cards.
+    else if dataSet == "Cards" then
+      val totalCards = MyLabel("Total cards received: " + clubData.totalCards)
+      val averageYellow = MyLabel("Average yellow cards per game: " + clubData.yellowsPerGameRounded)
+      val averageRed = MyLabel("Average red cards per game: " + clubData.redsPerGameRounded)
+      val averageTotal = MyLabel("Average cards received per game: " + clubData.averageCardsPerGame)
+      this.children.addAll(totalCards, averageYellow, averageRed, averageTotal)
+      // Additional text for line chart.
+      if chart == "Line Chart" then
+        val intervalWithMostCards = MyLabel("Interval with most cards received: " + clubData.intervalWithMostCards + "min")
+        val cardsInThatInterval = MyLabel("Cards received in that interval: " + clubData.mostCardsInInterval)
+        val percentage = MyLabel("Percentage of cards received in that interval: " + clubData.mostCardsPercentage)
+        this.children.addAll(intervalWithMostCards, cardsInThatInterval, percentage)
+
+    // Additional text for goals.
     else
       val scored = MyLabel("Goals scored: " + clubData.scored)
       val conceded = MyLabel("Goals conceded: " + clubData.conceded)
@@ -47,7 +63,6 @@ class Card extends VBox:
         val goalsInThatInterval = MyLabel("Goals scored in that interval: " + clubData.mostGoalsInInterval)
         val percentage = MyLabel("Percentage of goals scored in that interval: " + clubData.mostGoalsPercentage)
         this.children.addAll(intervalWithMostGoals, goalsInThatInterval, percentage)
-
 
 
   // Class for setting some properties of the labels added to this card.
