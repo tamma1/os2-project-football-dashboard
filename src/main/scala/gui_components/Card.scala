@@ -43,7 +43,7 @@ class Card extends VBox:
       this.children.addAll(totalCards, averageYellow, averageRed, averageTotal)
       // Additional text for line chart.
       if chart == "Line Chart" then
-        val intervalWithMostCards = MyLabel("Interval with most cards received: " + clubData.intervalWithMostCards + "min")
+        val intervalWithMostCards = MyLabel("Interval with most cards received: " + clubData.intervalWithMostCards + " min")
         val cardsInThatInterval = MyLabel("Cards received in that interval: " + clubData.mostCardsInInterval)
         val percentage = MyLabel("Percentage of cards received in that interval: " + clubData.mostCardsPercentage)
         this.children.addAll(intervalWithMostCards, cardsInThatInterval, percentage)

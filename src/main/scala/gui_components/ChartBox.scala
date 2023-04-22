@@ -112,14 +112,23 @@ class ChartBox extends StackPane:
 
   // Buttons for removing and updating the chart box.
   private val removeButton = new Button("Remove chart")
+  private val duplicateButton = new Button("Duplicate chart")
   private val refreshButton = new Button("Refresh data")
   refreshButton.visible = false
-  topArea.children.addAll(refreshButton, removeButton)
+  topArea.children.addAll(refreshButton, duplicateButton, removeButton)
 
   // Remove this chart when remove button is clicked.
   removeButton.setOnAction( _ =>
     val parentArea = this.getParent.asInstanceOf[JFlowPane]
     parentArea.children.removeAll(this)
+  )
+
+  // Duplicate this chart when duplicate button is clicked.
+  duplicateButton.setOnAction( _ =>
+    val parentArea = this.getParent.asInstanceOf[JFlowPane]
+    val newChart = new NewChartBox(this.prefHeight.value, this.prefWidth.value, leftVBox.selectedChart,
+      leftVBox.selectedLeague, leftVBox.selectedSeason, leftVBox.selectClub.value.value, leftVBox.selectedData.value)
+    parentArea.children += newChart
   )
 
   // Refresh the data in this chart when refresh button is clicked.
@@ -151,7 +160,7 @@ class ChartBox extends StackPane:
   private val card = new Card()
 
   // ComboBoxes for selecting chart and data.
-  private val leftVBox = new DataSelection()
+  val leftVBox = new DataSelection()
 
   // Display the selected chart.
   var chart: MyChart = new MyPieChart()
@@ -214,6 +223,7 @@ class ChartBox extends StackPane:
 
   // Adds the contents to this chart area.
   this.children += contents
+
 
 
 

@@ -2,6 +2,7 @@ import gui_components.*
 import javafx.scene.layout.StackPane as JStackPane
 import scalafx.Includes.*
 import scalafx.application.JFXApp3
+import scalafx.collections.ObservableBuffer
 import scalafx.geometry.{Insets, Pos}
 import scalafx.scene.Scene
 import scalafx.scene.control.*
