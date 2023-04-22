@@ -49,13 +49,14 @@ class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new Number
       for (r, i) <- clubData.redByMinute.zipWithIndex do
         redCards += XYChart.Data((i + 1) * 15, r)
 
-      val yellowSeries = JChart.XYChart.Series[Number, Number]
+      val yellowSeries = new JChart.XYChart.Series[Number, Number]
+      val redSeries = new JChart.XYChart.Series[Number, Number]
+      this.data = Seq(redSeries, yellowSeries)
       yellowSeries.setData(yellowCards)
       yellowSeries.setName("Yellow cards")
-      val redSeries = JChart.XYChart.Series[Number, Number]
       redSeries.setData(redCards)
-      redSeries.setName("Red Cards")
-      this.data = Seq(yellowSeries, redSeries)
+      redSeries.setName("Red cards")
+
 
     // Goals scored by minute.
     else

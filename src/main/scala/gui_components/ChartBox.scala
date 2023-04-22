@@ -96,25 +96,55 @@ class ChartBox extends StackPane:
     val bottom = heightValue - resizeMargin
     x > right || y > bottom
 
+  // Container for the last club data response.
+  private var clubDataResponse: Option[Response] = None
+
   // Container for contents in this chart box.
   private val contents = new BorderPane()
   contents.padding = Insets(1, 1, 1, 1)
 
   // Container for some buttons in the top area of the chart box.
   private val topArea = new HBox(10)
-  topArea.padding = Insets(1, 1, 1, 1)
+  topArea.padding = Insets(2, 2, 2, 2)
   topArea.background = Background(Array(new BackgroundFill(ForestGreen, CornerRadii.Empty, Insets.Empty)))
   topArea.alignment = CenterRight
   topArea.border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
 
-  // Button for removing the chart box.
+  // Buttons for removing and updating the chart box.
   private val removeButton = new Button("Remove chart")
-  topArea.children.addAll(removeButton)
+  private val refreshButton = new Button("Refresh data")
+  refreshButton.visible = false
+  topArea.children.addAll(refreshButton, removeButton)
 
   // Remove this chart when remove button is clicked.
   removeButton.setOnAction( _ =>
     val parentArea = this.getParent.asInstanceOf[JFlowPane]
     parentArea.children.removeAll(this)
+  )
+
+  // Refresh the data in this chart when refresh button is clicked.
+  refreshButton.setOnAction( _ =>
+    this.disable = true
+    val loading = new ProgressIndicator()
+    this.children += loading
+    val newData = Future { getClubData(leftVBox.selectedLeagueID, leftVBox.selectedSeasonID, leftVBox.selectedClubID.value) }
+    newData.onComplete {
+      case Success(response) =>
+        Platform.runLater {
+          chart.updateData(response, leftVBox.selectedData.value)
+          card.updateText(response, leftVBox.selectedData.value, leftVBox.selectedChart)
+          clubDataResponse = Some(response)
+          this.children.dropRightInPlace(1)
+          this.disable = false
+        }
+      case Failure(exception) =>
+        Platform.runLater {
+          chart.title = "Error refreshing data"
+          this.disable = false
+          this.children.dropRightInPlace(1)
+        }
+        throw exception
+    }
   )
 
   // Card for displaying additional information
@@ -124,7 +154,7 @@ class ChartBox extends StackPane:
   private val leftVBox = new DataSelection()
 
   // Display the selected chart.
-  private var chart: MyChart = new MyPieChart()
+  var chart: MyChart = new MyPieChart()
   leftVBox.selectChart.value.onChange( (_, _, newValue) =>
     chart = leftVBox.chartMap(newValue)
     contents.center = chart
@@ -135,9 +165,6 @@ class ChartBox extends StackPane:
       chart.updateTitle(leftVBox.selectedClub, leftVBox.selectedSeason, leftVBox.selectedData.value)
       card.updateText(clubDataResponse.get, leftVBox.selectedData.value, newValue)
   )
-
-  // Container for the last club data response.
-  private var clubDataResponse: Option[Response] = None
 
   // Updates the chart when a new club is selected.
   leftVBox.selectedClubID.onChange( (_, _, newValue) =>
@@ -156,6 +183,7 @@ class ChartBox extends StackPane:
           clubDataResponse = Some(clubData)
           this.children.dropRightInPlace(1)
           this.disable = false
+          refreshButton.visible = true
           this.prefWidth = this.getWidth + 1
           this.prefWidth = this.getWidth - 1
         }
@@ -163,7 +191,7 @@ class ChartBox extends StackPane:
         Platform.runLater {
           chart.title = "Error loading data"
           this.disable = false
-          this.children.dropRightInPlace(0)
+          this.children.dropRightInPlace(1)
         }
         throw exception
       }

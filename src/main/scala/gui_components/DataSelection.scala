@@ -70,9 +70,9 @@ class DataSelection extends VBox:
   // Container for selected data.
   var selectedChart = ""
   private var selectedLeague = ""
-  var selectedLeagueID = 39
+  var selectedLeagueID = -1
   var selectedSeason = ""
-  var selectedSeasonID = 2022
+  var selectedSeasonID = -1
   var selectedClub = ""
   val selectedClubID = new IntegerProperty(this, "clubID", -1)
   private var clubMap = Map[String, Int]()

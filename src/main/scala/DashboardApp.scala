@@ -30,8 +30,7 @@ object DashboardApp extends JFXApp3:
     val addChartButton = new Button("Add chart")
     val saveButton = new Button("Save dashboard")
     val loadButton = new Button("Load dashboard")
-    val refreshButton = new Button("Refresh data")
-    val topMenu = new HBox(10, addChartButton, saveButton, loadButton, refreshButton)
+    val topMenu = new HBox(10, addChartButton, saveButton, loadButton)
 
     // Sets background color and adds padding for top menu.
     topMenu.background = Background(Array(new BackgroundFill(SpringGreen, CornerRadii.Empty, Insets.Empty)))
