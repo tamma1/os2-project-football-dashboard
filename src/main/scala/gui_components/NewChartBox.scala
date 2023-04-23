@@ -26,21 +26,21 @@ class NewChartBox(
     prefWidth  = boxWidth
 
     // Sets selected chart.
-    if chartType != "" then
+    if chartType != null && chartType != "null" then
       leftVBox.selectChart.setValue(chartType)
 
     // Sets selected league
-    if league != "" then
+    if league != null && league != "null" then
       leftVBox.selectLeague.setValue(league)
       leftVBox.selectedLeagueID = leagueMap(league)
 
     // Sets selected season.
-    if season != "" then
+    if season != null && season != "null" then
       leftVBox.selectSeason.setValue(season)
       leftVBox.selectedSeasonID = seasonMap(season)
 
     // Sets selected club an upates the club map.
-    if club != null then
+    if club != null && club != "null" then
       this.children += new ProgressIndicator()
       val futureData = Future { getLeagueData(leftVBox.selectedLeagueID, leftVBox.selectedSeasonID).teams }
       futureData.onComplete {

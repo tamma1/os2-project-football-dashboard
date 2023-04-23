@@ -126,8 +126,8 @@ class ChartBox extends StackPane:
   // Duplicate this chart when duplicate button is clicked.
   duplicateButton.setOnAction( _ =>
     val parentArea = this.getParent.asInstanceOf[JFlowPane]
-    val newChart = new NewChartBox(this.prefHeight.value, this.prefWidth.value, leftVBox.selectedChart,
-      leftVBox.selectedLeague, leftVBox.selectedSeason, leftVBox.selectClub.value.value, leftVBox.selectedData.value)
+    val newChart = new NewChartBox(this.prefHeight.value, this.prefWidth.value, leftVBox.selectChart.value.value,
+      leftVBox.selectLeague.value.value, leftVBox.selectSeason.value.value, leftVBox.selectClub.value.value, leftVBox.selectClubData.value.value)
     parentArea.children += newChart
   )
 

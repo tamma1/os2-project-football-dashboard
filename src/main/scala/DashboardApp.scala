@@ -1,15 +1,17 @@
 import gui_components.*
-import javafx.scene.layout.StackPane as JStackPane
+import javafx.scene.layout.{StackPane as JStackPane, BorderPane as JBorderPane, VBox as JVBox, HBox as JHBox}
+import javafx.scene.control.ComboBox as JComboBox
 import scalafx.Includes.*
 import scalafx.application.JFXApp3
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.{Insets, Pos}
-import scalafx.scene.Scene
+import scalafx.scene.{Scene, Node}
 import scalafx.scene.control.*
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color.*
 import scalafx.scene.shape.Rectangle
+import scala.collection.mutable.Buffer
 
 
 object DashboardApp extends JFXApp3:
@@ -54,6 +56,35 @@ object DashboardApp extends JFXApp3:
       // Adds chartBox to chartArea.
       chartArea.children += newChart
     )
+
+    // Save dashboard to files.
+    saveButton.setOnAction( _ =>
+      val chartBoxes = chartArea.children.map( _.asInstanceOf[JStackPane])
+      // Retrieve necessery data from chart boxes.
+      val hAndW = chartBoxes.map( a => (a.getPrefHeight.toString, a.getPrefWidth.toString) )
+      val dataSelections = chartBoxes
+        .map( _.getChildren.head.asInstanceOf[JBorderPane] )
+        .map( _.getLeft.asInstanceOf[JVBox].getChildren)
+      // Save retrieved data to buffer.
+      val chartBuf = Buffer[List[String]]()
+      for (d, i) <- dataSelections.zipWithIndex do
+        val dataBuf = Buffer[String](hAndW(i)._1, hAndW(i)._2)
+        d.map( a => if a.isInstanceOf[JComboBox[String]] then
+          a.asInstanceOf[JComboBox[String]]
+        else
+          a.asInstanceOf[JHBox].getChildren.head.asInstanceOf[JComboBox[String]])
+        .map( _.getValue )
+        .foreach( v => dataBuf += v)
+        chartBuf += dataBuf.toList
+
+      FileManager.saveData("resources/save1.dbsave", chartBuf.toList)
+    )
+
+    // Load dashboard from files
+    loadButton.setOnAction( _ =>
+      FileManager.loadData("resources/save1.dbsave", chartArea)
+    )
+
 
     // Adds chart area and top menu to root.
     root.top = topMenu
