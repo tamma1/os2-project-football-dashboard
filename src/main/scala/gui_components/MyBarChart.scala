@@ -13,16 +13,14 @@ class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new Number
   // Set animated to false because the animated chart doesn't work properly.
   animated = false
 
-  // Adds some data.
-  private var dataBuf = ObservableBuffer[JChart.XYChart.Data[String, Number]](
-    XYChart.Data("data", 1.0),
-  )
+  // Add some sample data.
+  private var dataBuf = ObservableBuffer[JChart.XYChart.Data[String, Number]](XYChart.Data("data", 1.0))
 
-  // Creates a series from the data and adds it to the chart.
+  // Create a series from the sample data and add it to the chart.
   private val series = new XYChart.Series[String, Number] { data = dataBuf }
   this.data = series
 
-  // Adds the selected data to the chart.
+  // Add the selected data to the chart.
   def updateData(clubData: Response, dataSet: String) =
 
     // Fixtures data
@@ -47,11 +45,11 @@ class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new Number
         XYChart.Data("Scored", clubData.scored),
         XYChart.Data("Conceded", clubData.conceded)
       )
-    // Adds new data to chart.
+    // Add new data to chart.
     series.data = dataBuf
     this.data = series
 
-    // Adds tooltip to chart.
+    // Add tooltip to chart.
     for d <- dataBuf do
       val tooltip = new Tooltip(d.XValue.value + ": " + d.YValue.value.intValue())
       Tooltip.install(d.getNode: scalafx.scene.Node, tooltip)
@@ -62,7 +60,7 @@ class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new Number
         tooltip.hide()
       )
 
-  // Updates the title of the chart.
+  // Update the title of the chart.
   def updateTitle(club: String, season: String, dataSet: String) =
     title = dataSet + " of " + club + " in season " + season
 

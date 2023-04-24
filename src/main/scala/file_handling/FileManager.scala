@@ -7,7 +7,7 @@ import java.io.{BufferedWriter, FileNotFoundException, FileWriter, IOException}
 import scala.collection.mutable.Buffer
 import scala.io.Source
 
-// Object for saving/loading dashboard
+// Object for saving/loading dashboard.
 object FileManager:
 
   // Method for saving the dashboard data to file.
@@ -57,6 +57,7 @@ object FileManager:
 
   // Method for loading the dashboard data to file.
   def loadData(filePath: String, chartArea: FlowPane) =
+    // Set source.
     var source: Option[Source] = None
     try {
       source = Some(Source.fromFile(filePath))
@@ -73,18 +74,18 @@ object FileManager:
       while currentLine != "ENDOFFILE" && lines.hasNext do
         currentLine = lines.next().trim
         currentLine match
-          // Checks if current line is the start of a new box.
+          // Check if current line is the start of a new box.
           case s"BOX${n}:" =>
             if !isStartOfBox then
               boxData += currentBoxParams.toList
             currentBoxParams = Buffer[String]()
             isStartOfBox = false
-          // Checks if current line is the end of a box.
+          // Check if current line is the end of a box.
           case "*" | "#" =>
             boxData += currentBoxParams.toList
             currentBoxParams = Buffer[String]()
             isStartOfBox = true
-          // Checks if the line contains a parameter
+          // Check if the line contains a parameter
           case line if line.contains(":") =>
             val params = line.split(":")
             if params.length >= 2 then
@@ -92,7 +93,7 @@ object FileManager:
               currentBoxParams += param
           case _ =>
 
-      // Creates new chart boxes with loaded data and sets the boxes to chart area.
+      // Create new chart boxes with loaded data and set the boxes to chart area.
       chartArea.children.clear()
       for box <- boxData do
         if box.length != 7 then throw new FileManagerException("Invalid load file structure")

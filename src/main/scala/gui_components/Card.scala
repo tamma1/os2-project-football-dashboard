@@ -65,7 +65,7 @@ class Card extends VBox:
         this.children.addAll(intervalWithMostGoals, goalsInThatInterval, percentage)
 
 
-  // Class for setting some properties of the labels added to this card.
+  // Class for setting some properties for the labels added to this card.
   class MyLabel(text: String) extends Label(text):
     maxWidth = 215
     wrapText = true

@@ -1,19 +1,17 @@
-import file_handling.FileManager
-import gui_components.*
 import file_handling.*
-import javafx.scene.layout.{BorderPane as JBorderPane, HBox as JHBox, StackPane as JStackPane, VBox as JVBox}
+import gui_components.*
 import javafx.scene.control.ComboBox as JComboBox
+import javafx.scene.layout.{BorderPane as JBorderPane, HBox as JHBox, StackPane as JStackPane, VBox as JVBox}
 import scalafx.Includes.*
 import scalafx.application.JFXApp3
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.{Insets, Pos}
-import scalafx.scene.{Node, Scene}
 import scalafx.scene.control.*
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color.*
 import scalafx.scene.shape.Rectangle
-
+import scalafx.scene.{Node, Scene}
 import scala.collection.mutable.Buffer
 
 
@@ -21,37 +19,37 @@ object DashboardApp extends JFXApp3:
 
   def start(): Unit =
 
-    // Creates initial window.
+    // Create initial window.
     stage = new JFXApp3.PrimaryStage:
       title = "Football dashboard"
       width = 1400
       height = 820
 
-    // Adds root component to scene.
+    // Add root component to scene.
     val root = new BorderPane()
     val scene = Scene(parent = root)
     stage.scene = scene
 
-    // Adds buttons to the top menu.
+    // Add buttons to the top menu.
     val addChartButton = new Button("Add chart")
     val removeAllButton = new Button("Remove all charts")
     val saveButton = new Button("Save dashboard")
     val loadButton = new Button("Load dashboard")
     val topMenu = new HBox(10, addChartButton, removeAllButton, saveButton, loadButton)
 
-    // Sets background color and adds padding for top menu.
+    // Set background color and add padding for top menu.
     topMenu.background = Background(Array(new BackgroundFill(SpringGreen, CornerRadii.Empty, Insets.Empty)))
     topMenu.padding = Insets(6, 6, 6, 6)
 
-    // Creates chart area.
+    // Create chart area for chart boxes.
     val chartArea = new FlowPane(8, 8)
     chartArea.padding = Insets(8, 8, 8, 8)
 
-    // Adds a new chart box to chart area when "add chart" -button is clicked.
+    // Add a new chart box to chart area when "add chart" -button is clicked.
     addChartButton.setOnAction( _ =>
-      // Creates a new ChartBox
+      // Create a new ChartBox.
       val newChart = new ChartBox()
-      // Sets the height of the new chartBox to the height of the chartBox added earlier-
+      // Set the prefHeight of the new chartBox to the height of the chartBox added earlier.
       val lastChartHeight =
         chartArea.children.lastOption match
           case Some(a)  => a.asInstanceOf[JStackPane].getHeight
@@ -69,12 +67,13 @@ object DashboardApp extends JFXApp3:
     // Save dashboard to files.
     saveButton.setOnAction( _ =>
       val chartBoxes = chartArea.children.map( _.asInstanceOf[JStackPane])
-      // Retrieve necessery data from chart boxes.
+      // Save heights of chart boxes.
       val hAndW = chartBoxes.map( a => (a.getPrefHeight.toString, a.getPrefWidth.toString) )
+      // Access data selections of chart boxes.
       val dataSelections = chartBoxes
         .map( _.getChildren.head.asInstanceOf[JBorderPane] )
         .map( _.getLeft.asInstanceOf[JVBox].getChildren)
-      // Save retrieved data to buffer.
+      // Save selected data to buffer.
       val chartBuf = Buffer[List[String]]()
       for (d, i) <- dataSelections.zipWithIndex do
         val dataBuf = Buffer[String](hAndW(i)._1, hAndW(i)._2)
@@ -84,6 +83,7 @@ object DashboardApp extends JFXApp3:
         ).map( _.getValue )
         .foreach( v => dataBuf += v)
         chartBuf += dataBuf.toList
+      // Try saving data to file and show error alert if failed.
       try {
         FileManager.saveData("resources/save1.dbsave", chartBuf.toList)
       } catch {
@@ -93,6 +93,7 @@ object DashboardApp extends JFXApp3:
 
     // Load dashboard from files
     loadButton.setOnAction( _ =>
+      // Try loading data from file and show error alert if failed.
       try {
         FileManager.loadData("resources/save1.dbsave", chartArea)
       } catch {
@@ -108,8 +109,7 @@ object DashboardApp extends JFXApp3:
       exception.printStackTrace()
     }.showAndWait()
 
-
-    // Adds chart area and top menu to root.
+    // Add chart area and top menu to root.
     root.top = topMenu
     root.center = chartArea
 

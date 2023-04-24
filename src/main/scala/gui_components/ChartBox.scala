@@ -21,7 +21,7 @@ import scala.util.{Failure, Success}
 // Class for chart boxes that are added to the chart area.
 class ChartBox extends StackPane:
 
-  // Sets some properties for the chart box.
+  // Set some properties for the chart box.
   minWidth = 550
   minHeight = 200
   prefWidth = 670
@@ -30,7 +30,7 @@ class ChartBox extends StackPane:
   border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
   alignment = Center
 
-  // Some variables for saving values.
+  // Some variables for saving values used in resizing the chart box.
   private var dragging = false
   private var startX = 0.0
   private var startY = 0.0
@@ -38,7 +38,7 @@ class ChartBox extends StackPane:
   private var originalHeight = prefHeight.value
   private val resizeMargin = 10
 
-  // Changes the look of the cursor when hovering on a draggable area.
+  // Change the look of the cursor when hovering on a draggable area.
   onMouseMoved = (event: MouseEvent) => {
     if isResizable(event) then
       cursor = Cursor.NWResize
@@ -50,6 +50,7 @@ class ChartBox extends StackPane:
   onMousePressed = (event: MouseEvent) => {
     prefHeight = this.heightProperty().value
 
+    // Check if area is resizable and set some values.
     if isResizable(event) then
       dragging = true
       startX = event.sceneX
@@ -64,7 +65,7 @@ class ChartBox extends StackPane:
       onSameRow.foreach( a => (a.setPrefHeight(this.prefHeight.value)))
   }
 
-  // Changes the size of the chart box when mouse is dragged.
+  // Change the size of the chart box when mouse is dragged.
   onMouseDragged = (event: MouseEvent) => {
     if dragging then
       val deltaX = event.sceneX - startX
@@ -83,7 +84,7 @@ class ChartBox extends StackPane:
       onSameRow.foreach( a => (a.setPrefHeight(this.prefHeight.value)))
   }
 
-  // Sets dragging to false when mouse is released.
+  // Set dragging to false when mouse is released.
   onMouseReleased = (_: MouseEvent) => { dragging = false }
 
   // Determines if an area is draggable or not.
@@ -94,6 +95,7 @@ class ChartBox extends StackPane:
     val heightValue = height.toDouble
     val right = widthValue - resizeMargin
     val bottom = heightValue - resizeMargin
+    // True on the right and bottom border of the chart box.
     x > right || y > bottom
 
   // Container for the last club data response.
@@ -110,7 +112,7 @@ class ChartBox extends StackPane:
   topArea.alignment = CenterRight
   topArea.border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
 
-  // Buttons for removing and updating the chart box.
+  // Buttons for removing, duplicating and updating the chart box.
   private val removeButton = new Button("Remove chart")
   private val duplicateButton = new Button("Duplicate chart")
   private val refreshButton = new Button("Refresh data")
@@ -133,66 +135,82 @@ class ChartBox extends StackPane:
 
   // Refresh the data in this chart when refresh button is clicked.
   refreshButton.setOnAction( _ =>
-    this.disable = true
-    val loading = new ProgressIndicator()
-    this.children += loading
-    val newData = Future { getClubData(leftVBox.selectedLeagueID, leftVBox.selectedSeasonID, leftVBox.selectedClubID.value) }
-    newData.onComplete {
-      case Success(response) =>
-        Platform.runLater {
-          chart.updateData(response, leftVBox.selectClubData.getValue)
-          card.updateText(response, leftVBox.selectClubData.getValue, leftVBox.selectChart.getValue)
-          clubDataResponse = Some(response)
-          this.children.dropRightInPlace(1)
-          this.disable = false
-        }
-      case Failure(exception) =>
-        Platform.runLater {
-          chart.title = "Error refreshing data"
-          this.disable = false
-          this.children.dropRightInPlace(1)
-        }
-        throw exception
-    }
+    // Check if club is selected.
+    if leftVBox.selectClub.getValue != null then
+      // Add loading indicator.
+      this.disable = true
+      val loading = new ProgressIndicator()
+      this.children += loading
+      // Fetch new data from API.
+      val newData = Future { getClubData(leftVBox.selectedLeagueID, leftVBox.selectedSeasonID, leftVBox.selectedClubID.value) }
+      newData.onComplete {
+        // If data is refreshed succesfully, update chart and delete loading indicator.
+        case Success(response) =>
+          Platform.runLater {
+            chart.updateData(response, leftVBox.selectClubData.getValue)
+            card.updateText(response, leftVBox.selectClubData.getValue, leftVBox.selectChart.getValue)
+            clubDataResponse = Some(response)
+            this.children.dropRightInPlace(1)
+            this.disable = false
+          }
+        // If failed, set new title for chart.
+        case Failure(exception) =>
+          Platform.runLater {
+            chart.title = "Data refresh failed"
+            this.disable = false
+            this.children.dropRightInPlace(1)
+          }
+          throw exception
+      }
+    else
+      // If club is not selected, set a new title for chart to indicate an error.
+      chart.setTitle("Select club before refreshing")
   )
 
-  // Card for displaying additional information
+  // Card for displaying additional information.
   private val card = new Card()
 
   // ComboBoxes for selecting chart and data.
   val leftVBox = new DataSelection()
 
-  // Display the selected chart.
+  // Chart for displaying selected data in the center of this chart box.
   var chart: MyChart = new MyPieChart()
+  
+  // Update chart when a new chart is selected.
   leftVBox.selectChart.value.onChange( (_, _, newValue) =>
     chart = leftVBox.chartMap(newValue)
     contents.center = chart
     leftVBox.selectLeague.visible = true
+    // Update chart and additional text if club data response is defined.
     if clubDataResponse.isDefined then
       chart.updateData(clubDataResponse.get, leftVBox.selectClubData.getValue)
       chart.updateTitle(leftVBox.selectedClub, leftVBox.selectSeason.getValue, leftVBox.selectClubData.getValue)
       card.updateText(clubDataResponse.get, leftVBox.selectClubData.getValue, newValue)
   )
 
-  // Updates the chart when a new club is selected.
+  // Update the chart when a new club is selected.
   leftVBox.selectedClubID.onChange( (_, _, newValue) =>
     // Disable this chart box and add a progress indicator when data is being fetched from internet.
     this.disable = true
     val loading = new ProgressIndicator()
     this.children += loading
-    // Update the chart when data is loaded.
+    // Make API call.
     val newData = Future { getClubData(leftVBox.selectedLeagueID, leftVBox.selectedSeasonID, newValue.intValue()) }
     newData.onComplete {
+      // Update chart if new data is fetched succesfully.
       case Success(clubData) =>
         Platform.runLater {
           chart.updateData(clubData, leftVBox.selectClubData.getValue)
           chart.updateTitle(leftVBox.selectClub.getValue, leftVBox.selectSeason.getValue, leftVBox.selectClubData.getValue)
           card.updateText(clubData, leftVBox.selectClubData.getValue, leftVBox.selectChart.getValue)
+          // Save new data so it can be easily accessed when selected chart type and data set is changed.
           clubDataResponse = Some(clubData)
+          // Remove loading indicator.
           this.children.dropRightInPlace(1)
           this.disable = false
           refreshButton.visible = true
         }
+      // If API call fails, set new title for chart to indicate an error.
       case Failure(exception) =>
         Platform.runLater {
           chart.title = "Error loading data"
@@ -203,20 +221,20 @@ class ChartBox extends StackPane:
       }
     )
 
-  // Updates the chart when a new data set is selected.
-  leftVBox.selectedData.onChange( (_, _, newValue) =>
+  // Update the chart when a new data set is selected.
+  leftVBox.selectClubData.value.onChange( (_, _, newValue) =>
     if clubDataResponse.isDefined then
       chart.updateData(clubDataResponse.get, newValue)
       chart.updateTitle(leftVBox.selectedClub, leftVBox.selectSeason.getValue, newValue)
       card.updateText(clubDataResponse.get, newValue, leftVBox.selectChart.getValue)
   )
 
-  // Adds top, left and right area to the chart box.
+  // Add top, left and right area to the chart box.
   contents.top = topArea
   contents.left = leftVBox
   contents.right = card
 
-  // Adds the contents to this chart area.
+  // Add the contents to this chart area.
   this.children += contents
 
 

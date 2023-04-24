@@ -10,21 +10,24 @@ import scalafx.scene.control.Tooltip
 // Class for pie charts added to the dashboard.
 class MyPieChart extends PieChart with MyChart:
   
-  // Adds initial data to the pie chart.
+  // Add initial data to the pie chart.
   private var dataSeq = Seq(Data("data", 10))
   data = dataSeq
 
-  // Adds the selected data to the chart.
+  // Add the selected data to the chart.
   def updateData(clubData: Response, dataSet: String) =
+    // Set fixtures data.
     if dataSet == "Fixtures" then
       dataSeq = Seq(Data("Wins", clubData.wins), Data("Draws", clubData.draws), Data("Losses", clubData.loses))
+    // Set cards data.
     else if dataSet == "Cards" then
       dataSeq = Seq(Data("Yellow cards", clubData.totalYellows), Data("Red cards", clubData.totalReds))
+    // Set goals data.
     else
       dataSeq = Seq(Data("Goals scored", clubData.scored), Data("Goals conceded", clubData.conceded))
     data = dataSeq
 
-    // Adds tooltip to chart.
+    // Add tooltip to chart.
     for d <- dataSeq do
       val tooltip = new Tooltip(d.getName + ": " + d.getPieValue.toInt)
       Tooltip.install(d.getNode, tooltip)
@@ -35,8 +38,7 @@ class MyPieChart extends PieChart with MyChart:
         tooltip.hide()
       )
 
-
-  // Updates the title of the chart.
+  // Update the title of the chart.
   def updateTitle(club: String, season: String, dataSet: String) =
     title = dataSet + " of " + club + " in season " + season
 

@@ -5,14 +5,14 @@ import scala.math.*
 
 // Object for processing club data.
 object ClubData:
-  // Retrieves statistics of a given club.
+  // Retrieve statistics of a given club.
   def getClubData(leagueID: Int, season: Int, teamID: Int) =
     val url = s"https://api-football-v1.p.rapidapi.com/v3/teams/statistics?league=${leagueID}&season=${season}&team=${teamID}"
     val data = fetch(url)
-    // Transforms some fields in the JSON to fit the case class structure.
+    // Transform some fields in the JSON to fit the case class structure.
     val transformFor = data.replace("\"for\"", "\"forClub\"")
     val transformNumbers = transformFor.replaceAll("(\\d+)-(\\d+)", "m$1")
-    // Transforms the retrieved data into a Response case class.
+    // Transform the retrieved data into a Response case class.
     decodeTeamStats(transformNumbers)
 
   // Case class for handling club statistics
@@ -35,16 +35,20 @@ object ClubData:
 
     // Calculations for fixtures.
     private val biggest = response.biggest
-    val form = response.form
+    
+    private val form = response.form
     val formToPoints = form.map( c =>
         if c == 'W' then 3
         else if c == 'D' then 1
         else 0)
     val totalPoints = formToPoints.sum
+    
     private val averagePointsPerGame = totalPoints.toDouble / played
     val averagePointsRounded = rounded(averagePointsPerGame)
+    
     val longestWinStreak = biggest.streak.wins
     val longestLosingStreak = biggest.streak.loses
+    
     private val pointsStandardDeviation =
       val dividend = formToPoints.map( x => pow(x - averagePointsPerGame, 2) ).sum
       sqrt(dividend / played)
@@ -52,23 +56,31 @@ object ClubData:
 
     // Calculations for goals.
     private val goals = response.goals
+    
     val scored = goals.forClub.total.total
     val conceded = goals.against.total.total
+    
     private val scoredMinuteList = goals.forClub.minute
       .productIterator.map(_.asInstanceOf[MinuteStats]).toList
     val scoredByMinute = scoredMinuteList.map( _.total.getOrElse(0) )
+    
     private val concededMinuteList = goals.against.minute
       .productIterator.map(_.asInstanceOf[MinuteStats]).toList
     val concededByMinute = concededMinuteList.map( _.total.getOrElse(0) )
+    
     val averageGoalsPerGame = goals.forClub.average.total
     val averageConcededPerGame = goals.against.average.total
+    
     private val mostGoalsHome = biggest.goals.forClub.home
     private val mostGoalsAway = biggest.goals.forClub.away
     val mostGoalsInAGame = if mostGoalsAway > mostGoalsHome then mostGoalsAway else mostGoalsHome
+    
     private val mostGoalsConcededHome = biggest.goals.against.home
     private val mostGoalsConcededAway = biggest.goals.against.away
     val mostGoalsConcededInAGame = if mostGoalsConcededAway > mostGoalsConcededHome then mostGoalsConcededAway else mostGoalsConcededHome
+    
     val mostGoalsInInterval = scoredByMinute.max
+    
     private val mostGoalsIndex = scoredByMinute.indexOf(mostGoalsInInterval)
     val intervalWithMostGoals =
       val firstNumber = if mostGoalsIndex == 0 then "0" else (mostGoalsIndex * 15 + 1).toString
@@ -80,18 +92,22 @@ object ClubData:
 
     // Calculations for cards.
     private val cards = response.cards
+    
     private val yellowList = cards.yellow.productIterator.map( _.asInstanceOf[MinuteStats] ).toList
     val yellowByMinute = yellowList.map( _.total.getOrElse(0) )
     val totalYellows = yellowByMinute.sum
     private val yellowsPerGame = totalYellows.toDouble / played
     val yellowsPerGameRounded = rounded(yellowsPerGame)
+    
     private val redList = cards.red.productIterator.map( _.asInstanceOf[MinuteStats] ).toList
     val redByMinute = redList.map( _.total.getOrElse(0) )
     val totalReds = redByMinute.sum
     private val redsPerGame = totalReds.toDouble / played
     val redsPerGameRounded = rounded(redsPerGame)
+    
     val totalCards = totalReds + totalYellows
     val averageCardsPerGame = rounded(totalCards.toDouble / played)
+    
     private val cardList = yellowByMinute.zip(redByMinute).map( (y, r) => y + r)
     val mostCardsInInterval = cardList.max
     private val mostCardsIndex = cardList.indexOf(mostCardsInInterval)
@@ -104,8 +120,16 @@ object ClubData:
       rounded(percentage).toString + "%"
       
 
-
   // Some case classes used to transform the JSON into a case class.
+  case class InitialResponse(
+                            get: String,
+                            parameters: Parameters,
+                            errors: Array[String],
+                            results: Int,
+                            paging: LeagueData.Paging,
+                            response: InitialStats
+                            )
+  
   case class Parameters(
                        league: String,
                        season: String,
@@ -231,14 +255,6 @@ object ClubData:
                   red: Minute
                   )
 
-  // Case class used by the APIConnection.decodeTeamStats function.
-  case class InitialResponse(
-                            get: String,
-                            parameters: Parameters,
-                            errors: Array[String],
-                            results: Int,
-                            paging: LeagueData.Paging,
-                            response: InitialStats
-                            )
+  
 
 

@@ -5,17 +5,27 @@ import APIConnection.*
 // Object for processing league data.
 object LeagueData:
 
-  // Receives data from a league in a specific season and returns a Response case class containing the data.
+  // Retrieve data from a league in a specific season and return a Response case class containing the data.
   def getLeagueData(leagueID: Int, season: Int) =
     val url = s"https://api-football-v1.p.rapidapi.com/v3/teams?league=${leagueID}&season=${season}"
     val data = fetch(url)
     decodeTeams(data)
 
-  // Stores the data received from the API.
+  // Store the data received from the API.
   case class Response(private val initial: InitialResponse):
     val teams = initial.response.map( t => (t.team.name, t.team.id) ).toMap
     val results = initial.results
 
+  // Some case classes used to transform the JSON into a case class.
+  case class InitialResponse(
+                            get: String,
+                            parameters: Parameters,
+                            errors: Array[String],
+                            results: Int,
+                            paging: Paging,
+                            response: Array[InitialTeams]
+                            )
+   
   case class Team(
                  id: Int,
                  name: String,
@@ -42,15 +52,6 @@ object LeagueData:
 
   case class Paging(current: Int, total: Int)
 
-  // Case class used by the APIConnection.decodeTeams function.
-  case class InitialResponse(
-                            get: String,
-                            parameters: Parameters,
-                            errors: Array[String],
-                            results: Int,
-                            paging: Paging,
-                            response: Array[InitialTeams]
-                            )
 
   // Map of leageue names and their IDs.
   val leagueMap: Map[String, Int] = Map(
