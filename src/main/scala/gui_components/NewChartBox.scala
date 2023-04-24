@@ -1,6 +1,7 @@
 package gui_components
 
 import data_processing.LeagueData.*
+import file_handling.FileManagerException
 import scalafx.collections.ObservableMap
 import scalafx.scene.control.ProgressIndicator
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -27,15 +28,21 @@ class NewChartBox(
 
     // Sets selected chart.
     if chartType != null && chartType != "null" then
+      if !leftVBox.chartMap.contains(chartType) then
+        throw new FileManagerException("Invalid chart type: " + chartType)
       leftVBox.selectChart.setValue(chartType)
 
     // Sets selected league
     if league != null && league != "null" then
+      if !leagueMap.contains(league) then
+        throw new FileManagerException("Invalid league: " + league)
       leftVBox.selectLeague.setValue(league)
       leftVBox.selectedLeagueID = leagueMap(league)
 
     // Sets selected season.
     if season != null && season != "null" then
+      if !seasonMap.contains(season) then
+        throw new FileManagerException("Invalid season: " + season)
       leftVBox.selectSeason.setValue(season)
       leftVBox.selectedSeasonID = seasonMap(season)
 
@@ -47,6 +54,8 @@ class NewChartBox(
         case Success(clubs) =>
           Platform.runLater {
             leftVBox.clubMap.setValue(ObservableMap(clubs.toSeq: _*))
+            if !leftVBox.clubMap.value.contains(club) then
+              throw new FileManagerException("Invalid club: " + club)
             leftVBox.selectClub.setValue(club)
             leftVBox.selectedClubID.setValue(leftVBox.clubMap.value(leftVBox.selectClub.value.value))
             leftVBox.selectClubData.visible = true
@@ -61,6 +70,8 @@ class NewChartBox(
       }
 
     // Sets selected data set.
+    if !leftVBox.dataSets.contains(dataSet) then
+      throw new FileManagerException("Invalid data set: " + dataSet)
     leftVBox.selectClubData.setValue(dataSet)
 
 

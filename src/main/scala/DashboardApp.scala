@@ -1,16 +1,19 @@
+import file_handling.FileManager
 import gui_components.*
-import javafx.scene.layout.{StackPane as JStackPane, BorderPane as JBorderPane, VBox as JVBox, HBox as JHBox}
+import file_handling.*
+import javafx.scene.layout.{BorderPane as JBorderPane, HBox as JHBox, StackPane as JStackPane, VBox as JVBox}
 import javafx.scene.control.ComboBox as JComboBox
 import scalafx.Includes.*
 import scalafx.application.JFXApp3
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.{Insets, Pos}
-import scalafx.scene.{Scene, Node}
+import scalafx.scene.{Node, Scene}
 import scalafx.scene.control.*
 import scalafx.scene.input.MouseEvent
 import scalafx.scene.layout.*
 import scalafx.scene.paint.Color.*
 import scalafx.scene.shape.Rectangle
+
 import scala.collection.mutable.Buffer
 
 
@@ -76,14 +79,29 @@ object DashboardApp extends JFXApp3:
         .map( _.getValue )
         .foreach( v => dataBuf += v)
         chartBuf += dataBuf.toList
-
-      FileManager.saveData("resources/save1.dbsave", chartBuf.toList)
+      try {
+        FileManager.saveData("resources/save1.dbsave", chartBuf.toList)
+      } catch {
+        case e: Throwable => showErrorDialog("Saving dashboard failed.", e)
+      }
     )
 
     // Load dashboard from files
     loadButton.setOnAction( _ =>
-      FileManager.loadData("resources/save1.dbsave", chartArea)
+      try {
+        FileManager.loadData("resources/save1.dbsave", chartArea)
+      } catch {
+         case e: Throwable => showErrorDialog("Loading dashboard failed.", e)
+      }
     )
+
+    // Method for showing error dialog.
+    def showErrorDialog(message: String, exception: Throwable) = new Alert(Alert.AlertType.Error) {
+      title = "Error"
+      headerText = message
+      contentText = "Operation threw exception: " + exception.toString
+      exception.printStackTrace()
+    }.showAndWait()
 
 
     // Adds chart area and top menu to root.
