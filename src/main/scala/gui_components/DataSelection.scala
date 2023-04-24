@@ -35,10 +35,9 @@ class DataSelection extends VBox:
   )
 
   // Container for selected data.
-  var selectedChart = ""
-  var selectedLeague = ""
+  private var selectedLeague = ""
   var selectedLeagueID = -1
-  var selectedSeason = ""
+  private var selectedSeason = ""
   var selectedSeasonID = -1
   var selectedClub = ""
   val selectedClubID = new IntegerProperty(this, "clubID", -1)
@@ -84,7 +83,7 @@ class DataSelection extends VBox:
   this.children.addAll(selectChart, selectLeague, selectSeason, clubSelectionContainer, selectClubData)
 
   // Method for updating the clubSelection.
-  def updateClubs() =
+  private def updateClubs() =
     // Creates a ComboBox for selecting club.
     selectClub = new ComboBox[String]()
     selectClub.promptText = "Select club"

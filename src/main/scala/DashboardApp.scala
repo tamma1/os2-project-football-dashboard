@@ -34,9 +34,10 @@ object DashboardApp extends JFXApp3:
 
     // Adds buttons to the top menu.
     val addChartButton = new Button("Add chart")
+    val removeAllButton = new Button("Remove all charts")
     val saveButton = new Button("Save dashboard")
     val loadButton = new Button("Load dashboard")
-    val topMenu = new HBox(10, addChartButton, saveButton, loadButton)
+    val topMenu = new HBox(10, addChartButton, removeAllButton, saveButton, loadButton)
 
     // Sets background color and adds padding for top menu.
     topMenu.background = Background(Array(new BackgroundFill(SpringGreen, CornerRadii.Empty, Insets.Empty)))
@@ -48,7 +49,7 @@ object DashboardApp extends JFXApp3:
 
     // Adds a new chart box to chart area when "add chart" -button is clicked.
     addChartButton.setOnAction( _ =>
-      // Creates a new ChartBOx
+      // Creates a new ChartBox
       val newChart = new ChartBox()
       // Sets the height of the new chartBox to the height of the chartBox added earlier-
       val lastChartHeight =
@@ -58,6 +59,11 @@ object DashboardApp extends JFXApp3:
       newChart.prefHeight = lastChartHeight
       // Adds chartBox to chartArea.
       chartArea.children += newChart
+    )
+
+    // Remove all chart boxes from the chart area.
+    removeAllButton.setOnAction( _ =>
+      chartArea.children.clear()
     )
 
     // Save dashboard to files.
@@ -72,11 +78,10 @@ object DashboardApp extends JFXApp3:
       val chartBuf = Buffer[List[String]]()
       for (d, i) <- dataSelections.zipWithIndex do
         val dataBuf = Buffer[String](hAndW(i)._1, hAndW(i)._2)
-        d.map( a => if a.isInstanceOf[JComboBox[String]] then
-          a.asInstanceOf[JComboBox[String]]
-        else
-          a.asInstanceOf[JHBox].getChildren.head.asInstanceOf[JComboBox[String]])
-        .map( _.getValue )
+        d.map( a => a match
+          case c: JComboBox[String] => c
+          case _ => a.asInstanceOf[JHBox].getChildren.head.asInstanceOf[JComboBox[String]]
+        ).map( _.getValue )
         .foreach( v => dataBuf += v)
         chartBuf += dataBuf.toList
       try {

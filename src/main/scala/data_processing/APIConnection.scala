@@ -9,6 +9,7 @@ import io.circe.syntax.*
 import requests.*
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
+import file_handling.FileManagerException
 
 object APIConnection:
 
@@ -28,7 +29,7 @@ object APIConnection:
   private def apiCallCounter() =
     callTimes += 1
     if callTimes > 290 then
-      throw new Exception("Too many calls to API")
+      throw new FileManagerException("Too many calls to API")
 
   // Fetches data from the API.
   def fetch(url: String): String =
@@ -41,7 +42,7 @@ object APIConnection:
       case Success(data) => data
       case Failure(e)    =>
         Console.err.println("Connection failed.")
-        throw e
+        throw new FileManagerException("Connection failed")
 
   // Decodes the data received into a Response object.
   def decodeTeams(data: String) =
@@ -50,7 +51,7 @@ object APIConnection:
       case Failure(error) =>
         Console.err.println("Invalid data received.")
         error.printStackTrace()
-          throw error
+          throw new FileManagerException("Invalid data received")
 
   // Decode team statistics data.
   def decodeTeamStats(data: String) =
@@ -59,4 +60,4 @@ object APIConnection:
       case Failure(error) =>
         Console.err.println("Invalid data received.")
         error.printStackTrace()
-          throw error
+          throw new FileManagerException("Invalid data received")

@@ -127,7 +127,7 @@ class ChartBox extends StackPane:
   duplicateButton.setOnAction( _ =>
     val parentArea = this.getParent.asInstanceOf[JFlowPane]
     val newChart = new NewChartBox(this.prefHeight.value, this.prefWidth.value, leftVBox.selectChart.value.value,
-      leftVBox.selectLeague.value.value, leftVBox.selectSeason.value.value, leftVBox.selectClub.value.value, leftVBox.selectClubData.value.value)
+      leftVBox.selectLeague.getValue, leftVBox.selectSeason.getValue, leftVBox.selectClub.getValue, leftVBox.selectClubData.getValue)
     parentArea.children += newChart
   )
 
@@ -140,8 +140,8 @@ class ChartBox extends StackPane:
     newData.onComplete {
       case Success(response) =>
         Platform.runLater {
-          chart.updateData(response, leftVBox.selectedData.value)
-          card.updateText(response, leftVBox.selectedData.value, leftVBox.selectedChart)
+          chart.updateData(response, leftVBox.selectClubData.getValue)
+          card.updateText(response, leftVBox.selectClubData.getValue, leftVBox.selectChart.getValue)
           clubDataResponse = Some(response)
           this.children.dropRightInPlace(1)
           this.disable = false
@@ -167,12 +167,11 @@ class ChartBox extends StackPane:
   leftVBox.selectChart.value.onChange( (_, _, newValue) =>
     chart = leftVBox.chartMap(newValue)
     contents.center = chart
-    leftVBox.selectedChart = newValue
     leftVBox.selectLeague.visible = true
     if clubDataResponse.isDefined then
-      chart.updateData(clubDataResponse.get, leftVBox.selectedData.value)
-      chart.updateTitle(leftVBox.selectedClub, leftVBox.selectedSeason, leftVBox.selectedData.value)
-      card.updateText(clubDataResponse.get, leftVBox.selectedData.value, newValue)
+      chart.updateData(clubDataResponse.get, leftVBox.selectClubData.getValue)
+      chart.updateTitle(leftVBox.selectedClub, leftVBox.selectSeason.getValue, leftVBox.selectClubData.getValue)
+      card.updateText(clubDataResponse.get, leftVBox.selectClubData.getValue, newValue)
   )
 
   // Updates the chart when a new club is selected.
@@ -186,15 +185,13 @@ class ChartBox extends StackPane:
     newData.onComplete {
       case Success(clubData) =>
         Platform.runLater {
-          chart.updateData(clubData, leftVBox.selectedData.value)
-          chart.updateTitle(leftVBox.selectedClub, leftVBox.selectedSeason, leftVBox.selectedData.value)
-          card.updateText(clubData, leftVBox.selectedData.value, leftVBox.selectedChart)
+          chart.updateData(clubData, leftVBox.selectClubData.getValue)
+          chart.updateTitle(leftVBox.selectClub.getValue, leftVBox.selectSeason.getValue, leftVBox.selectClubData.getValue)
+          card.updateText(clubData, leftVBox.selectClubData.getValue, leftVBox.selectChart.getValue)
           clubDataResponse = Some(clubData)
           this.children.dropRightInPlace(1)
           this.disable = false
           refreshButton.visible = true
-          this.prefWidth = this.getWidth + 1
-          this.prefWidth = this.getWidth - 1
         }
       case Failure(exception) =>
         Platform.runLater {
@@ -210,10 +207,8 @@ class ChartBox extends StackPane:
   leftVBox.selectedData.onChange( (_, _, newValue) =>
     if clubDataResponse.isDefined then
       chart.updateData(clubDataResponse.get, newValue)
-      chart.updateTitle(leftVBox.selectedClub, leftVBox.selectedSeason, newValue)
-      card.updateText(clubDataResponse.get, newValue, leftVBox.selectedChart)
-      this.prefWidth = this.getWidth + 1
-      this.prefWidth = this.getWidth - 1
+      chart.updateTitle(leftVBox.selectedClub, leftVBox.selectSeason.getValue, newValue)
+      card.updateText(clubDataResponse.get, newValue, leftVBox.selectChart.getValue)
   )
 
   // Adds top, left and right area to the chart box.

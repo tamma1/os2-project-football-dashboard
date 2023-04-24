@@ -95,6 +95,7 @@ object FileManager:
       // Creates new chart boxes with loaded data and sets the boxes to chart area.
       chartArea.children.clear()
       for box <- boxData do
+        if box.length != 7 then throw new FileManagerException("Invalid load file structure")
         val height = box(0).toDoubleOption.getOrElse(throw new FileManagerException("Invalid height: " + box(0)))
         val width = box(1).toDoubleOption.getOrElse(throw new FileManagerException("Invalid width: " + box(1)))
         val newBox = new NewChartBox(height, width, box(2), box(3), box(4), box(5), box(6))
