@@ -26,6 +26,8 @@ class ChartBox extends StackPane:
   minHeight = 200
   prefWidth = 670
   prefHeight = 280
+  maxWidth = 1350
+  maxHeight = 690
   background = new Background(Array(new BackgroundFill(White, CornerRadii.Empty, Insets.Empty)))
   border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
   alignment = Center
@@ -174,9 +176,9 @@ class ChartBox extends StackPane:
   val leftVBox = new DataSelection()
 
   // Chart for displaying selected data in the center of this chart box.
-  var chart: MyChart = new MyPieChart()
-  
-  // Update chart when a new chart is selected.
+  private var chart: MyChart = new MyPieChart()
+
+  // Update chart when a new chart type is selected.
   leftVBox.selectChart.value.onChange( (_, _, newValue) =>
     chart = leftVBox.chartMap(newValue)
     contents.center = chart
