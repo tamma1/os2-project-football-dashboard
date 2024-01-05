@@ -5,13 +5,16 @@ import scala.math.*
 
 // Object for processing club data.
 object ClubData:
+  
   // Retrieve statistics of a given club.
   def getClubData(leagueID: Int, season: Int, teamID: Int) =
     val url = s"https://api-football-v1.p.rapidapi.com/v3/teams/statistics?league=${leagueID}&season=${season}&team=${teamID}"
     val data = fetch(url)
+    
     // Transform some fields in the JSON to fit the case class structure.
     val transformFor = data.replace("\"for\"", "\"forClub\"")
     val transformNumbers = transformFor.replaceAll("(\\d+)-(\\d+)", "m$1")
+    
     // Transform the retrieved data into a Response case class.
     decodeTeamStats(transformNumbers)
 
@@ -26,6 +29,7 @@ object ClubData:
     val results = initial.results
 
     private val response = initial.response
+    
     // Wins, draws, loses and total matches played.
     private val fixtures = response.fixtures
     val wins = fixtures.wins.total
@@ -33,6 +37,7 @@ object ClubData:
     val loses = fixtures.loses.total
     val played = fixtures.played.total
 
+    
     // Calculations for fixtures.
     private val biggest = response.biggest
     
@@ -54,6 +59,7 @@ object ClubData:
       sqrt(dividend / played)
     val pointsStandardDeviationRounded = rounded(pointsStandardDeviation)
 
+    
     // Calculations for goals.
     private val goals = response.goals
     
@@ -90,6 +96,7 @@ object ClubData:
       val percentageList = scoredMinuteList.map( _.percentage.getOrElse("0.0%") )
       percentageList(mostGoalsIndex)
 
+    
     // Calculations for cards.
     private val cards = response.cards
     

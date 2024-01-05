@@ -20,6 +20,7 @@ class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new Number
   private val series = new XYChart.Series[String, Number] { data = dataBuf }
   this.data = series
 
+  
   // Add the selected data to the chart.
   def updateData(clubData: Response, dataSet: String) =
 
@@ -31,6 +32,7 @@ class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new Number
         XYChart.Data("Draws", clubData.draws),
         XYChart.Data("Losses", clubData.loses),
       )
+      
     // Cards data
     else if dataSet == "Cards" then
       this.getYAxis.setLabel("Cards received")
@@ -38,6 +40,7 @@ class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new Number
         XYChart.Data("Yellow cards", clubData.totalYellows),
         XYChart.Data("Red cards", clubData.totalReds)
       )
+      
     // Goals data
     else
       this.getYAxis.setLabel("Goals")
@@ -45,6 +48,7 @@ class MyBarChart extends BarChart[String, Number](new CategoryAxis(), new Number
         XYChart.Data("Scored", clubData.scored),
         XYChart.Data("Conceded", clubData.conceded)
       )
+      
     // Add new data to chart.
     series.data = dataBuf
     this.data = series

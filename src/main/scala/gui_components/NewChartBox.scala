@@ -48,9 +48,11 @@ class NewChartBox(
     // Set selected club an upate the club map if club is defined.
     if club != null && club != "null" then
       this.children += new ProgressIndicator()
+      
       // Make an API call.
       val futureData = Future { getLeagueData(leftVBox.selectedLeagueID, leftVBox.selectedSeasonID).teams }
       futureData.onComplete {
+              
         // If API call is succesfull, update club selection and chart data.
         case Success(clubs) =>
           Platform.runLater {
@@ -62,6 +64,7 @@ class NewChartBox(
             leftVBox.selectClubData.visible = true
             this.children.dropRightInPlace(1)
           }
+          
         // If API call fails, set new prompt text for combo box indicatin an error.
         case Failure(exception) =>
           Platform.runLater {

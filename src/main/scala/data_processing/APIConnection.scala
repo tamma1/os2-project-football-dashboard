@@ -28,9 +28,10 @@ object APIConnection:
   // Ensure the call limit on API doesn't exceed.
   private def apiCallCounter() =
     callTimes += 1
-    if callTimes > 290 then
+    if callTimes > 20 then
       throw new FileManagerException("Too many calls to API")
 
+  
   // Fetch data from the API.
   def fetch(url: String): String =
     apiCallCounter()
@@ -38,6 +39,7 @@ object APIConnection:
       requests.get(url, headers = List(("X-RapidAPI-Key", apiKey), ("X-RapidAPI-Host", "api-football-v1.p.rapidapi.com")))
       .text()
     }
+    
     // Return fetched data if API call is successfull.
     res match
       case Success(data) => data
@@ -45,6 +47,7 @@ object APIConnection:
         Console.err.println("Connection failed.")
         throw new FileManagerException("Connection failed")
 
+  
   // Decode the league data received into a Response object.
   def decodeTeams(data: String) =
     decode[LeagueInitialResponse](data).toTry match

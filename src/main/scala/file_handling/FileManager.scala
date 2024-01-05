@@ -57,6 +57,7 @@ object FileManager:
 
   // Method for loading the dashboard data to file.
   def loadData(filePath: String, chartArea: FlowPane) =
+  
     // Set source.
     var source: Option[Source] = None
     try {
@@ -74,17 +75,20 @@ object FileManager:
       while currentLine != "ENDOFFILE" && lines.hasNext do
         currentLine = lines.next().trim
         currentLine match
+          
           // Check if current line is the start of a new box.
           case s"BOX${n}:" =>
             if !isStartOfBox then
               boxData += currentBoxParams.toList
             currentBoxParams = Buffer[String]()
             isStartOfBox = false
+            
           // Check if current line is the end of a box.
           case "*" | "#" =>
             boxData += currentBoxParams.toList
             currentBoxParams = Buffer[String]()
             isStartOfBox = true
+            
           // Check if the line contains a parameter
           case line if line.contains(":") =>
             val params = line.split(":")
@@ -103,6 +107,7 @@ object FileManager:
         chartArea.children += newBox
 
     } catch {
+            
       // Handle exceptions.
       case e: FileManagerException =>
         throw e
@@ -114,6 +119,7 @@ object FileManager:
         throw new FileManagerException("Error with loading dashboard data: Unexpected exception.")
 
     } finally {
+      
       // Close source.
       source.foreach( _.close() )
     }

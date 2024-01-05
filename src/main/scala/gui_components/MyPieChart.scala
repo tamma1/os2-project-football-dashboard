@@ -14,14 +14,18 @@ class MyPieChart extends PieChart with MyChart:
   private var dataSeq = Seq(Data("data", 10))
   data = dataSeq
 
+  
   // Add the selected data to the chart.
   def updateData(clubData: Response, dataSet: String) =
+  
     // Set fixtures data.
     if dataSet == "Fixtures" then
       dataSeq = Seq(Data("Wins", clubData.wins), Data("Draws", clubData.draws), Data("Losses", clubData.loses))
+      
     // Set cards data.
     else if dataSet == "Cards" then
       dataSeq = Seq(Data("Yellow cards", clubData.totalYellows), Data("Red cards", clubData.totalReds))
+      
     // Set goals data.
     else
       dataSeq = Seq(Data("Goals scored", clubData.scored), Data("Goals conceded", clubData.conceded))

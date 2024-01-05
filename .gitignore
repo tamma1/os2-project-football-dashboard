@@ -38,6 +38,8 @@ bin/
 .history
 .scala_dependencies
 .cache-main
+project/
+resources/
 
 # general
 *.class

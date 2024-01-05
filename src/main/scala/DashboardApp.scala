@@ -45,16 +45,20 @@ object DashboardApp extends JFXApp3:
     val chartArea = new FlowPane(8, 8)
     chartArea.padding = Insets(8, 8, 8, 8)
 
+    
     // Add a new chart box to chart area when "add chart" -button is clicked.
     addChartButton.setOnAction( _ =>
+      
       // Create a new ChartBox.
       val newChart = new ChartBox()
+      
       // Set the prefHeight of the new chartBox to the height of the chartBox added earlier.
       val lastChartHeight =
         chartArea.children.lastOption match
           case Some(a)  => a.asInstanceOf[JStackPane].getHeight
           case _        => newChart.prefHeight.value
       newChart.prefHeight = lastChartHeight
+      
       // Adds chartBox to chartArea.
       chartArea.children += newChart
     )
@@ -67,12 +71,15 @@ object DashboardApp extends JFXApp3:
     // Save dashboard to files.
     saveButton.setOnAction( _ =>
       val chartBoxes = chartArea.children.map( _.asInstanceOf[JStackPane])
+      
       // Save heights of chart boxes.
       val hAndW = chartBoxes.map( a => (a.getPrefHeight.toString, a.getPrefWidth.toString) )
+      
       // Access data selections of chart boxes.
       val dataSelections = chartBoxes
         .map( _.getChildren.head.asInstanceOf[JBorderPane] )
         .map( _.getLeft.asInstanceOf[JVBox].getChildren)
+      
       // Save selected data to buffer.
       val chartBuf = Buffer[List[String]]()
       for (d, i) <- dataSelections.zipWithIndex do
@@ -83,6 +90,7 @@ object DashboardApp extends JFXApp3:
         ).map( _.getValue )
         .foreach( v => dataBuf += v)
         chartBuf += dataBuf.toList
+        
       // Try saving data to file and show error alert if failed.
       try {
         FileManager.saveData("resources/save1.dbsave", chartBuf.toList)
@@ -93,6 +101,7 @@ object DashboardApp extends JFXApp3:
 
     // Load dashboard from files
     loadButton.setOnAction( _ =>
+      
       // Try loading data from file and show error alert if failed.
       try {
         FileManager.loadData("resources/save1.dbsave", chartArea)

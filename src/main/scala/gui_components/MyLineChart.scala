@@ -20,17 +20,22 @@ class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new Number
   sampleSeries.setData(sampleData)
   this.data = sampleSeries
 
+  
   // Add the selected data to the chart.
   def updateData(clubData: Response, dataSet: String) =
+  
     // Form during the season.
     if dataSet == "Fixtures" then
+      
       // Sets x- and y-axis names.
       this.getXAxis.setLabel("Game number")
       this.getYAxis.setLabel("Points earned in game")
+      
       // Set data.
       val fixtures = ObservableBuffer[JChart.XYChart.Data[Number, Number]]()
       for (c, i) <- clubData.formToPoints.zipWithIndex do
         fixtures += XYChart.Data(i + 1, c)
+        
       // Adds new data to chart.
       val fixtureSeries = JChart.XYChart.Series[Number, Number]
       fixtureSeries.setData(fixtures)
@@ -39,9 +44,11 @@ class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new Number
 
     // Cards received by minute.
     else if dataSet == "Cards" then
+      
       // Set axis names.
       this.getXAxis.setLabel("Time (end of 15 minute interval)")
       this.getYAxis.setLabel("Cards received")
+      
       // Set data for yellow and red cards.
       val yellowCards = ObservableBuffer[JChart.XYChart.Data[Number, Number]]()
       for (x, i) <- clubData.yellowByMinute.zipWithIndex do
@@ -49,6 +56,7 @@ class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new Number
       val redCards = ObservableBuffer[JChart.XYChart.Data[Number, Number]]()
       for (r, i) <- clubData.redByMinute.zipWithIndex do
         redCards += XYChart.Data((i + 1) * 15, r)
+        
       // Create yellow and red card series, and add them to chart.
       val yellowSeries = new JChart.XYChart.Series[Number, Number]
       val redSeries = new JChart.XYChart.Series[Number, Number]
@@ -60,9 +68,11 @@ class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new Number
 
     // Goals scored by minute.
     else
+      
       // Set axis names.
       this.getXAxis.setLabel("Time (end of 15 minute interval)")
       this.getYAxis.setLabel("Goals")
+      
       // Set scored and conceded goals data.
       val goalsScored = ObservableBuffer[JChart.XYChart.Data[Number, Number]]()
       for (x, i) <- clubData.scoredByMinute.zipWithIndex do
@@ -70,6 +80,7 @@ class MyLineChart extends LineChart[Number, Number](new NumberAxis(), new Number
       val goalsConceded = ObservableBuffer[JChart.XYChart.Data[Number, Number]]()
       for (g, i) <- clubData.concededByMinute.zipWithIndex do
         goalsConceded += XYChart.Data((i + 1) * 15, g)
+        
       // Create scored and conceded goals series, and add them to chart.
       val scoredSeries = JChart.XYChart.Series[Number, Number]
       scoredSeries.setData(goalsScored)

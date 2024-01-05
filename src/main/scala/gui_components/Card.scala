@@ -16,8 +16,10 @@ class Card extends VBox:
   children += MyLabel("Additional data is displayed here")
   border = new Border(new BorderStroke(Black, BorderStrokeStyle.Solid, CornerRadii.Empty, BorderWidths(1)))
 
+  
   def updateText(clubData: Response, dataSet: String, chart: String) =
     this.children = ObservableBuffer()
+    
     // Additional text for fixtures.
     if dataSet == "Fixtures" then
       val total = MyLabel("Total games played: " + clubData.played)
@@ -29,6 +31,7 @@ class Card extends VBox:
       val totalPoints = MyLabel("Total points: " + clubData.totalPoints)
       val averagePoints = MyLabel("Average points per game: " + clubData.averagePointsRounded)
       this.children.addAll(total, wins, draws, losses, losingStreak, winStreak, totalPoints, averagePoints)
+      
       // Additional text for line chart.
       if chart == "Line Chart" then
         val standardDeviation = MyLabel("Standard deviation: " + clubData.pointsStandardDeviationRounded)
@@ -41,6 +44,7 @@ class Card extends VBox:
       val averageRed = MyLabel("Average red cards per game: " + clubData.redsPerGameRounded)
       val averageTotal = MyLabel("Average cards received per game: " + clubData.averageCardsPerGame)
       this.children.addAll(totalCards, averageYellow, averageRed, averageTotal)
+      
       // Additional text for line chart.
       if chart == "Line Chart" then
         val intervalWithMostCards = MyLabel("Interval with most cards received: " + clubData.intervalWithMostCards + " min")
@@ -57,6 +61,7 @@ class Card extends VBox:
       val mostGoalsScored = MyLabel("Most goals scored in a game: " + clubData.mostGoalsInAGame)
       val mostGoalsConceded = MyLabel("Most goals conceded in a game: " + clubData.mostGoalsConcededInAGame)
       this.children.addAll(scored, conceded, goalsPerGame, concededPerGame, mostGoalsScored, mostGoalsConceded)
+      
       // Additional text for line chart.
       if chart == "Line Chart" then
         val intervalWithMostGoals = MyLabel("Interval with most goals scored: " + clubData.intervalWithMostGoals + " min")

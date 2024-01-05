@@ -59,6 +59,7 @@ class ChartBox extends StackPane:
       startY = event.sceneY
       originalWidth = prefWidth.value
       originalHeight = prefHeight.value
+      
       // Change the prefHeight of all chart areas on the same row in the FlowPane.
       val yInScene = this.localToScene(this.getBoundsInLocal).getMinY
       val onSameRow = this.getParent.asInstanceOf[JFlowPane].children
@@ -78,6 +79,7 @@ class ChartBox extends StackPane:
       val newHeightValue = math.max(minHeightValue, originalHeight + deltaY)
       prefWidth = newWidthValue
       prefHeight = newHeightValue
+      
       // Change the prefHeight of all chart areas on the same row in the FlowPane.
       val yInScene = this.localToScene(this.getBoundsInLocal).getMinY
       val onSameRow = this.getParent.asInstanceOf[JFlowPane].children
@@ -135,17 +137,22 @@ class ChartBox extends StackPane:
     parentArea.children += newChart
   )
 
+  
   // Refresh the data in this chart when refresh button is clicked.
   refreshButton.setOnAction( _ =>
+    
     // Check if club is selected.
     if leftVBox.selectClub.getValue != null then
+      
       // Add loading indicator.
       this.disable = true
       val loading = new ProgressIndicator()
       this.children += loading
+      
       // Fetch new data from API.
       val newData = Future { getClubData(leftVBox.selectedLeagueID, leftVBox.selectedSeasonID, leftVBox.selectedClubID.value) }
       newData.onComplete {
+              
         // If data is refreshed succesfully, update chart and delete loading indicator.
         case Success(response) =>
           Platform.runLater {
@@ -155,6 +162,7 @@ class ChartBox extends StackPane:
             this.children.dropRightInPlace(1)
             this.disable = false
           }
+          
         // If failed, set new title for chart.
         case Failure(exception) =>
           Platform.runLater {
@@ -165,6 +173,7 @@ class ChartBox extends StackPane:
           throw exception
       }
     else
+      
       // If club is not selected, set a new title for chart to indicate an error.
       chart.setTitle("Select club before refreshing")
   )
@@ -178,11 +187,13 @@ class ChartBox extends StackPane:
   // Chart for displaying selected data in the center of this chart box.
   private var chart: MyChart = new MyPieChart()
 
+  
   // Update chart when a new chart type is selected.
   leftVBox.selectChart.value.onChange( (_, _, newValue) =>
     chart = leftVBox.chartMap(newValue)
     contents.center = chart
     leftVBox.selectLeague.visible = true
+    
     // Update chart and additional text if club data response is defined.
     if clubDataResponse.isDefined then
       chart.updateData(clubDataResponse.get, leftVBox.selectClubData.getValue)
@@ -196,22 +207,27 @@ class ChartBox extends StackPane:
     this.disable = true
     val loading = new ProgressIndicator()
     this.children += loading
+    
     // Make API call.
     val newData = Future { getClubData(leftVBox.selectedLeagueID, leftVBox.selectedSeasonID, newValue.intValue()) }
     newData.onComplete {
+            
       // Update chart if new data is fetched succesfully.
       case Success(clubData) =>
         Platform.runLater {
           chart.updateData(clubData, leftVBox.selectClubData.getValue)
           chart.updateTitle(leftVBox.selectClub.getValue, leftVBox.selectSeason.getValue, leftVBox.selectClubData.getValue)
           card.updateText(clubData, leftVBox.selectClubData.getValue, leftVBox.selectChart.getValue)
+          
           // Save new data so it can be easily accessed when selected chart type and data set is changed.
           clubDataResponse = Some(clubData)
+          
           // Remove loading indicator.
           this.children.dropRightInPlace(1)
           this.disable = false
           refreshButton.visible = true
         }
+        
       // If API call fails, set new title for chart to indicate an error.
       case Failure(exception) =>
         Platform.runLater {

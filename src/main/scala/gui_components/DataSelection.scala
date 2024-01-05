@@ -19,6 +19,7 @@ import scala.util.{Failure, Success}
 
 // Container for ComboBoxes to select data.
 class DataSelection extends VBox:
+  
   // Set some properties.
   spacing = 5
   padding = Insets(2, 2, 2, 2)
@@ -33,6 +34,7 @@ class DataSelection extends VBox:
     "Line Chart" -> new MyLineChart()
   )
 
+  
   // Container for selected data.
   private var selectedLeague = ""
   var selectedLeagueID = -1
@@ -81,28 +83,35 @@ class DataSelection extends VBox:
   // Add ComboBoxes to this selection area.
   this.children.addAll(selectChart, selectLeague, selectSeason, clubSelectionContainer, selectClubData)
 
+  
   // Method for updating the clubSelection.
   private def updateClubs() =
+  
     // Create a ComboBox for selecting club.
     selectClub = new ComboBox[String]()
     selectClub.promptText = "Select club"
     selectClub.disable = true
+    
     // Create a loading indicator.
     val loading = new ProgressIndicator()
     loading.prefHeight = 10
     loading.prefWidth = 20
+    
     // Add ComboBox and loading indicator to container.
     clubSelectionContainer.children(0) = selectClub
     clubSelectionContainer.children(1) = loading
     clubSelectionContainer.visible = true
 
+    
     // Map of clubs and their IDs wrapped in a Future.
     val futureData = Future { getLeagueData(leagueMap(selectedLeague), seasonMap(selectedSeason)).teams }
+    
     // Add the clubs to the combo box list when data is fetched.
     futureData.onComplete {
       case Success(clubs) =>
         Platform.runLater {
           selectClub.items = ObservableBuffer().concat(clubs.keys.toList.sorted)
+          
           // Save new club map.
           clubMap.setValue(ObservableMap(clubs.toSeq: _*))
           loading.visible = false
@@ -114,7 +123,8 @@ class DataSelection extends VBox:
             selectedClubID.set(clubMap.value(newValue))
             selectClubData.visible = true
           }
-         }
+        }
+        
       // If API call fails, set a prompt text for combo box indicating an error.
       case Failure(exception) =>
         Platform.runLater {
@@ -124,11 +134,13 @@ class DataSelection extends VBox:
         throw exception
     }
 
+  
   // Add season selection when league is selected, and save the league ID.
   selectLeague.value.onChange { (_, _, newValue) =>
     selectedLeague = newValue
     selectedLeagueID = leagueMap(newValue)
     selectSeason.visible = true
+    
     // Update club selection if season is selected.
     if selectSeason.getValue != null then
       updateClubs()
